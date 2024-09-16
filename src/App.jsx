@@ -1,3 +1,4 @@
+import Register from "./pages/auth/Register"
 
 
 
@@ -5,7 +6,7 @@ function App() {
 
   return (
     <>
-      <div>hello world!</div>
+      <Register />
     </>
   )
 }
