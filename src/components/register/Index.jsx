@@ -2,8 +2,16 @@ import { useFormik } from "formik";
 import React, { useState } from "react";
 import { registerSchema } from "../../validation/Validation";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
+import { PulseLoader } from "react-spinners";
 
-const RegFormComp = () => {
+const RegFormComp = ({ toast }) => {
+  const [loader, setLoader] = useState(false);
+  const auth = getAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPass, setConfirmPass] = useState(false);
 
@@ -16,12 +24,64 @@ const RegFormComp = () => {
 
   const formik = useFormik({
     initialValues,
-    onSubmit: console.log("submitted"),
+    onSubmit: () => {
+      createNewUsers();
+    },
     validationSchema: registerSchema,
   });
 
-  console.log(formik);
 
+  const createNewUsers = () => {
+    setLoader(true);
+    createUserWithEmailAndPassword(
+      auth,
+      formik.values.email,
+      formik.values.password
+    )
+      .then(() => {
+        sendEmailVerification(auth.currentUser)
+          .then(() => {
+            toast.info("Please verify this email to complete your registration.", {
+              position: "top-right",
+              autoClose: false,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: false,
+              draggable: false,
+              progress: undefined,
+              theme: "colored",
+            });
+            setLoader(false);
+          })
+          .catch((error) => {
+            toast.error(error.message, {
+              position: "bottom-right",
+              autoClose: 3000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: false,
+              progress: undefined,
+              theme: "dark",
+            });
+          });
+      })
+      .catch((error) => {
+        if (error.message.includes("auth/email-already-in-use")) {
+          toast.error("This email is already in use. Please try logging in.", {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: false,
+            progress: undefined,
+            theme: "dark",
+          });
+          setLoader(false);
+        }
+      });
+  };
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -70,12 +130,17 @@ const RegFormComp = () => {
           />
           <button
             onClick={handleShowPassword}
+            type="button"
             className="absolute top-7 right-1 p-2 bg-transparent border-0 outline-none"
           >
             {showPassword ? (
-              <span className=""><PiEyeClosed /></span>
+              <span title="Hide">
+                <PiEye />
+              </span>
             ) : (
-              <span className=""><PiEye /></span>
+              <span title="Show">
+                <PiEyeClosed />
+              </span>
             )}
           </button>
           {formik.errors.password && formik.touched.password ? (
@@ -94,12 +159,17 @@ const RegFormComp = () => {
           />
           <button
             onClick={handleConfirmPass}
+            type="button"
             className="absolute top-7 right-1 p-2 bg-transparent border-0 outline-none"
           >
             {confirmPass ? (
-              <span className=""><PiEyeClosed /></span>
+              <span title="Hide">
+                <PiEye />
+              </span>
             ) : (
-              <span className=""><PiEye /></span>
+              <span title="Show">
+                <PiEyeClosed />
+              </span>
             )}
           </button>
           {formik.errors.confirmPassword && formik.touched.confirmPassword ? (
@@ -110,9 +180,14 @@ const RegFormComp = () => {
         </div>
         <button
           type="submit"
-          className="w-full bg-[#313131] text-white font-medium text-base px-3 py-3 rounded-lg my-2 active:scale-95 transition ease-out"
+          disabled={loader}
+          className="w-full bg-[#313131] text-white font-medium text-base px-3 py-3 rounded-lg my-2 disabled:cursor-not-allowed disabled:scale-100 active:scale-95 transition ease-out"
         >
-          Sign Up
+          {loader ? (
+            <PulseLoader color="#fff" size={5} speedMultiplier={1} />
+          ) : (
+            "Sign Up"
+          )}
         </button>
       </form>
       <p className="text-base font-normal text-black mt-2">
