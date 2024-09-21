@@ -8,10 +8,12 @@ import {
   sendEmailVerification,
 } from "firebase/auth";
 import { PulseLoader } from "react-spinners";
+import { Link, useNavigate } from "react-router-dom";
 
 const RegFormComp = ({ toast }) => {
   const [loader, setLoader] = useState(false);
   const auth = getAuth();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPass, setConfirmPass] = useState(false);
 
@@ -30,7 +32,6 @@ const RegFormComp = ({ toast }) => {
     validationSchema: registerSchema,
   });
 
-
   const createNewUsers = () => {
     setLoader(true);
     createUserWithEmailAndPassword(
@@ -41,16 +42,22 @@ const RegFormComp = ({ toast }) => {
       .then(() => {
         sendEmailVerification(auth.currentUser)
           .then(() => {
-            toast.info("Please verify this email to complete your registration.", {
-              position: "bottom-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: false,
-              progress: undefined,
-              theme: "colored",
-            });
+            toast.info(
+              "Please verify this email to complete your registration.",
+              {
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+              }
+            );
+            setTimeout(() => {
+              navigate ("/sign-in")  ;
+            }, 6000);
             setLoader(false);
           })
           .catch((error) => {
@@ -192,9 +199,12 @@ const RegFormComp = ({ toast }) => {
       </form>
       <p className="text-base font-normal text-black mt-2">
         Already have an account please{" "}
-        <span className="text-[#236DB0] font-medium cursor-pointer hover:text-blue-500">
+        <Link
+          to="/sign-in"
+          className="text-[#236DB0] font-medium cursor-pointer hover:underline"
+        >
           Sign In
-        </span>
+        </Link>
       </p>
     </div>
   );

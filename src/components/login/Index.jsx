@@ -4,11 +4,16 @@ import { loginSchema } from "../../validation/Validation";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
 import { PulseLoader } from "react-spinners";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { useDispatch } from "react-redux";
+import { LoggedInUsers } from "../../features/slices/LoginSlice";
+import { Link, useNavigate } from "react-router-dom";
 
 const LoginFormComp = ({ toast }) => {
   const auth = getAuth();
   const [loader, setLoader] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const initialValues = {
     email: "",
@@ -28,22 +33,12 @@ const LoginFormComp = ({ toast }) => {
       formik.values.email,
       formik.values.password
     )
-      .then(({user}) => {
+      .then(({ user }) => {
         if (user.emailVerified === true) {
-          // console.log("You're successfully logged in.");
-          toast.success("You're successfully logged in.", {
-            position: "bottom-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: false,
-            progress: undefined,
-            theme: "colored",
-            });
-          
-        }else{
-          // console.log("Please verify your email.");
+          dispatch(LoggedInUsers(user));
+          localStorage.setItem("user", JSON.stringify(user));
+          navigate("/");
+        } else {
           toast.error("Please verify your email.", {
             position: "bottom-right",
             autoClose: 3000,
@@ -53,12 +48,9 @@ const LoginFormComp = ({ toast }) => {
             draggable: false,
             progress: undefined,
             theme: "colored",
-            });
-          
+          });
         }
-        
         setLoader(false);
-        
       })
       .catch((error) => {
         if (error.message.includes("auth/invalid-credential")) {
@@ -144,9 +136,12 @@ const LoginFormComp = ({ toast }) => {
         </p>
         <p className="text-base font-normal text-black mt-6 mb-6">
           Don’t have an account please{" "}
-          <span className="text-[#236DB0] font-medium cursor-pointer hover:text-blue-500">
+          <Link
+            to="/sign-up"
+            className="text-[#236DB0] font-medium cursor-pointer hover:underline"
+          >
             Sign Up
-          </span>
+          </Link>
         </p>
       </div>
     </>
