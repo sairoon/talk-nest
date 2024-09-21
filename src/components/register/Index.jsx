@@ -42,11 +42,11 @@ const RegFormComp = ({ toast }) => {
         sendEmailVerification(auth.currentUser)
           .then(() => {
             toast.info("Please verify this email to complete your registration.", {
-              position: "top-right",
-              autoClose: false,
-              hideProgressBar: true,
+              position: "bottom-right",
+              autoClose: 5000,
+              hideProgressBar: false,
               closeOnClick: true,
-              pauseOnHover: false,
+              pauseOnHover: true,
               draggable: false,
               progress: undefined,
               theme: "colored",
@@ -57,7 +57,7 @@ const RegFormComp = ({ toast }) => {
             toast.error(error.message, {
               position: "bottom-right",
               autoClose: 3000,
-              hideProgressBar: true,
+              hideProgressBar: false,
               closeOnClick: true,
               pauseOnHover: true,
               draggable: false,
@@ -71,7 +71,7 @@ const RegFormComp = ({ toast }) => {
           toast.error("This email is already in use. Please try logging in.", {
             position: "bottom-right",
             autoClose: 3000,
-            hideProgressBar: true,
+            hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
             draggable: false,
@@ -99,7 +99,7 @@ const RegFormComp = ({ toast }) => {
             name="userName"
             value={formik.values.userName}
             onChange={formik.handleChange}
-            className="w-full bg-transparent px-3 py-2 border border-slate-300 rounded-md outline-none"
+            className="w-full bg-transparent px-3 py-2 border border-slate-300 rounded-md outline-none mt-3"
           />
           {formik.errors.userName && formik.touched.userName ? (
             <span className="text-red-500">{formik.errors.userName}</span>
@@ -112,7 +112,7 @@ const RegFormComp = ({ toast }) => {
             name="email"
             value={formik.values.email}
             onChange={formik.handleChange}
-            className="w-full bg-transparent px-3 py-2 border border-slate-300 rounded-md outline-none"
+            className="w-full bg-transparent px-3 py-2 border border-slate-300 rounded-md outline-none mt-3"
           />
           {formik.errors.email && formik.touched.email ? (
             <span className="text-red-500">{formik.errors.email}</span>
@@ -126,12 +126,12 @@ const RegFormComp = ({ toast }) => {
             name="password"
             value={formik.values.password}
             onChange={formik.handleChange}
-            className="w-full bg-transparent ps-3 pe-10 py-2 border border-slate-300 rounded-md outline-none"
+            className="w-full bg-transparent ps-3 pe-10 py-2 border border-slate-300 rounded-md outline-none mt-3"
           />
           <button
             onClick={handleShowPassword}
             type="button"
-            className="absolute top-7 right-1 p-2 bg-transparent border-0 outline-none"
+            className="absolute top-10 right-1 p-2 bg-transparent border-0 outline-none"
           >
             {showPassword ? (
               <span title="Hide">
@@ -155,12 +155,12 @@ const RegFormComp = ({ toast }) => {
             name="confirmPassword"
             value={formik.values.confirmPassword}
             onChange={formik.handleChange}
-            className="w-full bg-transparent ps-3 pe-10 py-2 border border-slate-300 rounded-md outline-none"
+            className="w-full bg-transparent ps-3 pe-10 py-2 border border-slate-300 rounded-md outline-none mt-3"
           />
           <button
             onClick={handleConfirmPass}
             type="button"
-            className="absolute top-7 right-1 p-2 bg-transparent border-0 outline-none"
+            className="absolute top-10 right-1 p-2 bg-transparent border-0 outline-none"
           >
             {confirmPass ? (
               <span title="Hide">
@@ -192,7 +192,7 @@ const RegFormComp = ({ toast }) => {
       </form>
       <p className="text-base font-normal text-black mt-2">
         Already have an account please{" "}
-        <span className="text-[#236DB0] font-medium cursor-pointer">
+        <span className="text-[#236DB0] font-medium cursor-pointer hover:text-blue-500">
           Sign In
         </span>
       </p>

@@ -1,0 +1,156 @@
+import { useFormik } from "formik";
+import React, { useState } from "react";
+import { loginSchema } from "../../validation/Validation";
+import { PiEye, PiEyeClosed } from "react-icons/pi";
+import { PulseLoader } from "react-spinners";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
+const LoginFormComp = ({ toast }) => {
+  const auth = getAuth();
+  const [loader, setLoader] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const initialValues = {
+    email: "",
+    password: "",
+  };
+  const formik = useFormik({
+    initialValues,
+    onSubmit: () => {
+      loginUser();
+    },
+    validationSchema: loginSchema,
+  });
+  const loginUser = () => {
+    setLoader(true);
+    signInWithEmailAndPassword(
+      auth,
+      formik.values.email,
+      formik.values.password
+    )
+      .then(({user}) => {
+        if (user.emailVerified === true) {
+          // console.log("You're successfully logged in.");
+          toast.success("You're successfully logged in.", {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: false,
+            progress: undefined,
+            theme: "colored",
+            });
+          
+        }else{
+          // console.log("Please verify your email.");
+          toast.error("Please verify your email.", {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: false,
+            progress: undefined,
+            theme: "colored",
+            });
+          
+        }
+        
+        setLoader(false);
+        
+      })
+      .catch((error) => {
+        if (error.message.includes("auth/invalid-credential")) {
+          toast.error("Email or Password is incorrect. Please try again.", {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: false,
+            progress: undefined,
+            theme: "dark",
+          });
+          setLoader(false);
+        }
+      });
+  };
+
+  const handleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+  return (
+    <>
+      <div>
+        <form onSubmit={formik.handleSubmit}>
+          <div className="my-3">
+            <label>Enter Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              className="w-full bg-transparent px-3 py-2 border border-slate-300 rounded-md outline-none mt-3"
+            />
+            {formik.errors.email && formik.touched.email ? (
+              <span className="text-red-500">{formik.errors.email}</span>
+            ) : null}
+          </div>
+
+          <div className="mt-5 mb-3 relative">
+            <label>Enter Password</label>
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              className="w-full bg-transparent ps-3 pe-10 py-2 border border-slate-300 rounded-md outline-none mt-3"
+            />
+            <button
+              onClick={handleShowPassword}
+              type="button"
+              className="absolute top-10 right-1 p-2 bg-transparent border-0 outline-none"
+            >
+              {showPassword ? (
+                <span title="Hide">
+                  <PiEye />
+                </span>
+              ) : (
+                <span title="Show">
+                  <PiEyeClosed />
+                </span>
+              )}
+            </button>
+            {formik.errors.password && formik.touched.password ? (
+              <span className="text-red-500">{formik.errors.password}</span>
+            ) : null}
+          </div>
+
+          <button
+            type="submit"
+            disabled={loader}
+            className="w-full bg-[#313131] text-white font-medium text-base px-3 py-3 rounded-lg my-2 disabled:cursor-not-allowed disabled:scale-100 active:scale-95 transition ease-out"
+          >
+            {loader ? (
+              <PulseLoader color="#fff" size={5} speedMultiplier={1} />
+            ) : (
+              "Sign In"
+            )}
+          </button>
+        </form>
+        <p className="text-base font-normal text-[#4A4A4A] underline cursor-pointer mt-6 hover:text-purple-700">
+          forgot password?
+        </p>
+        <p className="text-base font-normal text-black mt-6 mb-6">
+          Don’t have an account please{" "}
+          <span className="text-[#236DB0] font-medium cursor-pointer hover:text-blue-500">
+            Sign Up
+          </span>
+        </p>
+      </div>
+    </>
+  );
+};
+
+export default LoginFormComp;
