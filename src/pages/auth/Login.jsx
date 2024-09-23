@@ -1,6 +1,6 @@
-import React from 'react'
-import LoginFormComp from '../../components/login/Index'
-import { toast, ToastContainer } from 'react-toastify'
+import React from "react";
+import LoginFormComp from "../../components/login/Index";
+import { toast, ToastContainer } from "react-toastify";
 
 const Login = () => {
   return (
@@ -17,7 +17,7 @@ const Login = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

@@ -56,7 +56,7 @@ const RegFormComp = ({ toast }) => {
               }
             );
             setTimeout(() => {
-              navigate ("/sign-in")  ;
+              navigate("/sign-in");
             }, 6000);
             setLoader(false);
           })
