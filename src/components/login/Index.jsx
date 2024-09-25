@@ -77,13 +77,13 @@ const LoginFormComp = ({ toast }) => {
       <div>
         <form onSubmit={formik.handleSubmit}>
           <div className="my-3">
-            <label>Enter Email</label>
+            <label className="text-[#484848] dark:text-white">Enter Email</label>
             <input
               type="email"
               name="email"
               value={formik.values.email}
               onChange={formik.handleChange}
-              className="w-full bg-transparent px-3 py-2 border border-slate-300 rounded-md outline-none mt-3"
+              className="w-full bg-transparent px-3 py-2 border border-slate-300 rounded-md outline-none mt-3 text-gray-800 dark:text-white"
             />
             {formik.errors.email && formik.touched.email ? (
               <span className="text-red-500">{formik.errors.email}</span>
@@ -91,18 +91,18 @@ const LoginFormComp = ({ toast }) => {
           </div>
 
           <div className="mt-5 mb-3 relative">
-            <label>Enter Password</label>
+            <label className="text-[#484848] dark:text-white">Enter Password</label>
             <input
               type={showPassword ? "text" : "password"}
               name="password"
               value={formik.values.password}
               onChange={formik.handleChange}
-              className="w-full bg-transparent ps-3 pe-10 py-2 border border-slate-300 rounded-md outline-none mt-3"
+              className="w-full bg-transparent ps-3 pe-10 py-2 border border-slate-300 rounded-md outline-none mt-3 text-gray-800 dark:text-white"
             />
             <button
               onClick={handleShowPassword}
               type="button"
-              className="absolute top-10 right-1 p-2 bg-transparent border-0 outline-none"
+              className="absolute top-10 right-1 p-2 bg-transparent border-0 outline-none text-black dark:text-white"
             >
               {showPassword ? (
                 <span title="Hide">
@@ -122,7 +122,7 @@ const LoginFormComp = ({ toast }) => {
           <button
             type="submit"
             disabled={loader}
-            className="w-full bg-[#313131] text-white font-medium text-base px-3 py-3 rounded-lg my-2 disabled:cursor-not-allowed disabled:scale-100 active:scale-95 transition ease-out"
+            className="w-full bg-[#313131] text-white font-medium text-base px-3 py-3 rounded-[10px] my-2 disabled:cursor-not-allowed disabled:scale-100 active:scale-95 transition ease-out"
           >
             {loader ? (
               <PulseLoader color="#fff" size={5} speedMultiplier={1} />
@@ -131,14 +131,14 @@ const LoginFormComp = ({ toast }) => {
             )}
           </button>
         </form>
-        <p className="text-base font-normal text-[#4A4A4A] underline cursor-pointer mt-6 hover:text-purple-700">
+        <p className="text-base font-normal text-[#4A4A4A] dark:text-white underline cursor-pointer mt-6 hover:text-purple-700 dark:hover:text-purple-300">
           forgot password?
         </p>
-        <p className="text-base font-normal text-black mt-6 mb-6">
+        <p className="text-base font-normal text-black dark:text-white mt-6 mb-6">
           Don’t have an account please{" "}
           <Link
             to="/sign-up"
-            className="text-[#236DB0] font-medium cursor-pointer hover:underline"
+            className="text-[#236DB0] dark:text-sky-300 font-medium cursor-pointer hover:underline"
           >
             Sign Up
           </Link>
