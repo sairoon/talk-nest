@@ -39,7 +39,7 @@ const Navber = () => {
             <div className="absolute top-1/2 left-1/2 rounded-full opacity-0 transform -translate-x-1/2 -translate-y-1/2 text-white z-20 group-hover:opacity-100 cursor-pointer transition ease-out active:scale-90">
               <UploadIcon />
             </div>
-            <span className="absolute top-1/2 left-1/2 bg-black w-full h-full opacity-0 rounded-full transform -translate-x-1/2 -translate-y-1/2 z-10 group-hover:opacity-40 transition ease-out"></span>
+            <span className="absolute top-1/2 left-1/2 bg-black w-full h-full opacity-0 rounded-full transform -translate-x-1/2 -translate-y-1/2 z-10 group-hover:opacity-45 transition ease-out"></span>
           </div>
           <span className="text-white font-semibold text-xl px-2 flex justify-center">
             My nam..
