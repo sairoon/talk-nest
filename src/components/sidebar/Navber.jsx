@@ -30,24 +30,35 @@ const Navber = () => {
     <>
       <aside className="w-[166px] h-full dark:bg-[#352481] bg-[#5E3493] flex flex-col justify-between items-center text-black py-3">
         <div className="flex flex-col items-center gap-y-2 pt-4">
-          <div className="relative ">
-            <div className="w-[106px] h-[106px] rounded-full bg-[#118060] flex items-center justify-center"></div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white">
+          <div className="relative group">
+            <img
+              src="https://picsum.photos/208"
+              className="w-[106px] h-[106px] rounded-full flex items-center justify-center"
+              alt="my-profile-pic"
+            />
+            <div className="absolute top-1/2 left-1/2 rounded-full opacity-0 transform -translate-x-1/2 -translate-y-1/2 text-white z-20 group-hover:opacity-100 cursor-pointer transition ease-out active:scale-90">
               <UploadIcon />
             </div>
+            <span className="absolute top-1/2 left-1/2 bg-black w-full h-full opacity-0 rounded-full transform -translate-x-1/2 -translate-y-1/2 z-10 group-hover:opacity-40 transition ease-out"></span>
           </div>
           <span className="text-white font-semibold text-xl px-2 flex justify-center">
-            User nam..
+            My nam..
           </span>
         </div>
         <div className="flex flex-col items-center gap-y-10 pb-12 cursor-pointer">
-          <Link to={"/"} className="text-white relative">
+          <Link
+            to={"/"}
+            className="text-white relative active:scale-90 transition ease-out"
+          >
             <HomeIcon />
             {location.pathname === "/" && (
               <span className="absolute -top-2 -right-[50px] w-2 h-16 bg-white dark:bg-slate-800 cursor-auto"></span>
             )}
           </Link>
-          <Link to={"/message"} className="text-white relative">
+          <Link
+            to={"/message"}
+            className="text-white relative active:scale-90 transition ease-out"
+          >
             <MessageIcon />
             {location.pathname === "/message" && (
               <span className="absolute -top-2 -right-[50px] w-2 h-16 bg-white dark:bg-slate-800 cursor-auto"></span>
@@ -55,7 +66,7 @@ const Navber = () => {
           </Link>
         </div>
         <button
-          className="flex items-center gap-x-2 text-white font-semibold text-xl pb-10 cursor-pointer"
+          className="flex items-center gap-x-2 text-white font-semibold text-xl pb-10 cursor-pointer hover:scale-105 active:scale-95 transition ease-out"
           onClick={handleLogout}
         >
           <span>
