@@ -51,7 +51,7 @@ const MyFriends = () => {
           </div>
           <div className="flex items-center gap-x-2">
             <button
-              className="bg-amber-400 px-8 py-3 rounded-md font-semibold text-sm text-black active:scale-90 transition ease-out"
+              className="bg-amber-400 px-8 py-3 rounded-md font-semibold text-sm text-black cursor-not-allowed"
               title="You're blocked"
             >
               Blocked

@@ -61,7 +61,7 @@ const AllUsers = () => {
             </h3>
           </div>
           <button
-            className="bg-sky-500 px-4 py-3 rounded-md text-white text-sm font-semibold active:scale-90 transition ease-out"
+            className="bg-sky-500 px-4 py-3 rounded-md text-white text-sm font-semibold cursor-auto"
             title="Send you friend request"
           >
             Request
