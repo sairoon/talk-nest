@@ -23,7 +23,7 @@ const Chatting = () => {
             </div>
             <input
               type="text"
-              className="w-full outline-none bg-transparent text-[#C8C8C8] px-4"
+              className="w-full outline-none bg-transparent text-[#C8C8C8] px-4 font-medium text-xl"
               placeholder="type here...."
             />
             <button className="bg-[#3E8DEB] py-4 px-10 rounded-[10px] font-medium text-white text-xl me-3">

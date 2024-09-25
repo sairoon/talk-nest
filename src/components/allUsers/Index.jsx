@@ -10,13 +10,13 @@ const AllUsers = () => {
         </h1>
         <input
           type="text"
-          className="my-6 rounded-[10px] py-3 px-3 w-full bg-[#F8F8F8] outline-none"
+          className="my-6 rounded-[10px] py-3 px-4 w-full bg-[#F8F8F8] outline-none text-2xl font-normal"
           placeholder="Search User.."
         />
         <div className="flex items-center justify-between mt-4">
           <div className="flex items-center gap-2">
             <div className="w-20 h-20 rounded-full bg-slate-400"></div>
-            <h3 className="text-xl font-medium text-[#3D3C3C] dark:text-white">
+            <h3 className="text-2xl font-medium text-[#3D3C3C] dark:text-white">
               User Name
             </h3>
           </div>
@@ -30,7 +30,7 @@ const AllUsers = () => {
         <div className="flex items-center justify-between mt-4">
           <div className="flex items-center gap-2">
             <div className="w-20 h-20 rounded-full bg-slate-400"></div>
-            <h3 className="text-xl font-medium text-[#3D3C3C] dark:text-white">
+            <h3 className="text-2xl font-medium text-[#3D3C3C] dark:text-white">
               User Name
             </h3>
           </div>
@@ -44,7 +44,7 @@ const AllUsers = () => {
         <div className="flex items-center justify-between mt-4">
           <div className="flex items-center gap-2">
             <div className="w-20 h-20 rounded-full bg-slate-400"></div>
-            <h3 className="text-xl font-medium text-[#3D3C3C] dark:text-white">
+            <h3 className="text-2xl font-medium text-[#3D3C3C] dark:text-white">
               User Name
             </h3>
           </div>
