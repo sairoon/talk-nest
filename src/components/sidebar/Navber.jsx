@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { HomeIcon } from "../../svg/Home";
 import { MessageIcon } from "../../svg/Message";
 import { LogoutIcon } from "../../svg/Logout";
@@ -7,8 +7,10 @@ import { UploadIcon } from "../../svg/Upload";
 import { getAuth, signOut } from "firebase/auth";
 import { useDispatch } from "react-redux";
 import { LoggedOutUsers } from "../../features/slices/LoginSlice";
+import Modal from "../modal/Index";
 
 const Navber = () => {
+  const [show, setShow] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -36,7 +38,10 @@ const Navber = () => {
               className="w-[106px] h-[106px] rounded-full flex items-center justify-center"
               alt="my-profile-pic"
             />
-            <div className="absolute top-1/2 left-1/2 rounded-full opacity-0 transform -translate-x-1/2 -translate-y-1/2 text-white z-20 group-hover:opacity-100 cursor-pointer transition ease-out active:scale-90">
+            <div
+              className="absolute top-1/2 left-1/2 rounded-full opacity-0 transform -translate-x-1/2 -translate-y-1/2 text-white z-20 group-hover:opacity-100 cursor-pointer transition ease-out active:scale-90"
+              onClick={() => setShow(true)}
+            >
               <UploadIcon />
             </div>
             <span className="absolute top-1/2 left-1/2 bg-black w-full h-full opacity-0 rounded-full transform -translate-x-1/2 -translate-y-1/2 z-10 group-hover:opacity-45 transition ease-out"></span>
@@ -75,6 +80,7 @@ const Navber = () => {
           Log Out
         </button>
       </aside>
+      {show && <Modal setShow={setShow} />}
     </>
   );
 };
