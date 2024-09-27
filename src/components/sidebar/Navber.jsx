@@ -5,16 +5,18 @@ import { LogoutIcon } from "../../svg/Logout";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { UploadIcon } from "../../svg/Upload";
 import { getAuth, signOut } from "firebase/auth";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { LoggedOutUsers } from "../../features/slices/LoginSlice";
 import Modal from "../modal/Index";
+import avatarImg from "/public/img/avatar.jpg";
 
 const Navber = () => {
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const auth = getAuth();
+  const user = useSelector((user) => user.login.loggedIn);
 
   const handleLogout = () => {
     signOut(auth)
@@ -34,8 +36,8 @@ const Navber = () => {
         <div className="flex flex-col items-center gap-y-2 pt-4">
           <div className="relative group">
             <img
-              src="https://picsum.photos/208"
-              className="w-[106px] h-[106px] rounded-full flex items-center justify-center"
+              src={user.photoURL || avatarImg}
+              className="w-[106px] h-[106px] rounded-full flex object-cover items-center justify-center"
               alt="my-profile-pic"
             />
             <div

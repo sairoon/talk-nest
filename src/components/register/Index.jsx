@@ -188,7 +188,7 @@ const RegFormComp = ({ toast }) => {
         <button
           type="submit"
           disabled={loader}
-          className="w-full bg-[#313131] text-white font-medium text-base px-3 py-3 rounded-[10px] my-2 disabled:cursor-not-allowed disabled:scale-100 active:scale-95 transition ease-out"
+          className="w-full bg-[#313131] text-white font-medium text-base px-3 py-3 rounded-[10px] my-2 disabled:cursor-not-allowed disabled:scale-100 active:scale-95 transition-all ease-out hover:bg-purple-700 dark:hover:bg-stone-800"
         >
           {loader ? (
             <PulseLoader color="#fff" size={5} speedMultiplier={1} />
