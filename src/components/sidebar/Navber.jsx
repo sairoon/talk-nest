@@ -49,7 +49,7 @@ const Navber = () => {
             <span className="absolute top-1/2 left-1/2 bg-black w-full h-full opacity-0 rounded-full transform -translate-x-1/2 -translate-y-1/2 z-10 group-hover:opacity-45 transition ease-out"></span>
           </div>
           <span className="text-white font-semibold text-xl px-2 flex justify-center">
-            My nam..
+            {user.displayName}
           </span>
         </div>
         <div className="flex flex-col items-center gap-y-10 pb-12 cursor-pointer">

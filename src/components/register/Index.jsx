@@ -6,9 +6,11 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  updateProfile,
 } from "firebase/auth";
 import { PulseLoader } from "react-spinners";
 import { Link, useNavigate } from "react-router-dom";
+import { getDatabase, ref, set } from "firebase/database";
 
 const RegFormComp = ({ toast }) => {
   const [loader, setLoader] = useState(false);
@@ -16,6 +18,7 @@ const RegFormComp = ({ toast }) => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPass, setConfirmPass] = useState(false);
+  const db = getDatabase();
 
   const initialValues = {
     userName: "",
@@ -39,39 +42,50 @@ const RegFormComp = ({ toast }) => {
       formik.values.email,
       formik.values.password
     )
-      .then(() => {
-        sendEmailVerification(auth.currentUser)
-          .then(() => {
-            toast.info(
-              "Please verify this email to complete your registration.",
-              {
+      .then(({ user }) => {
+        console.log(user);
+        updateProfile(auth.currentUser, {
+          displayName: formik.values.userName,
+        }).then(() => {
+          sendEmailVerification(auth.currentUser)
+            .then(() => {
+              toast.info(
+                "Please verify this email to complete your registration.",
+                {
+                  position: "bottom-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: false,
+                  progress: undefined,
+                  theme: "colored",
+                }
+              );
+              setTimeout(() => {
+                navigate("/sign-in");
+              }, 6000);
+              setLoader(false);
+            })
+            .then(() => {
+              set(ref(db, "users/" + user.uid), {
+                username: user.displayName,
+                email: user.email,
+              });
+            })
+            .catch((error) => {
+              toast.error(error.message, {
                 position: "bottom-right",
-                autoClose: 5000,
+                autoClose: 3000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
                 draggable: false,
                 progress: undefined,
-                theme: "colored",
-              }
-            );
-            setTimeout(() => {
-              navigate("/sign-in");
-            }, 6000);
-            setLoader(false);
-          })
-          .catch((error) => {
-            toast.error(error.message, {
-              position: "bottom-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: false,
-              progress: undefined,
-              theme: "dark",
+                theme: "dark",
+              });
             });
-          });
+        });
       })
       .catch((error) => {
         if (error.message.includes("auth/email-already-in-use")) {
@@ -127,7 +141,9 @@ const RegFormComp = ({ toast }) => {
         </div>
 
         <div className="my-3 relative">
-          <label className="text-[#484848] dark:text-white">Enter Password</label>
+          <label className="text-[#484848] dark:text-white">
+            Enter Password
+          </label>
           <input
             type={showPassword ? "text" : "password"}
             name="password"
@@ -156,7 +172,9 @@ const RegFormComp = ({ toast }) => {
         </div>
 
         <div className="my-3 relative">
-          <label className="text-[#484848] dark:text-white">Enter Confirm Password</label>
+          <label className="text-[#484848] dark:text-white">
+            Enter Confirm Password
+          </label>
           <input
             type={confirmPass ? "text" : "password"}
             name="confirmPassword"
