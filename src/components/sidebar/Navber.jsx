@@ -8,7 +8,6 @@ import { getAuth, signOut } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { LoggedOutUsers } from "../../features/slices/LoginSlice";
 import Modal from "../modal/Index";
-import avatarImg from "/public/img/avatar.jpg";
 
 const Navber = () => {
   const [show, setShow] = useState(false);
@@ -36,7 +35,7 @@ const Navber = () => {
         <div className="flex flex-col items-center gap-y-2 pt-4">
           <div className="relative group">
             <img
-              src={user.photoURL || avatarImg}
+              src={user.photoURL || "/img/avatar.jpg"}
               className="w-[106px] h-[106px] rounded-full flex object-cover items-center justify-center"
               alt="my-profile-pic"
             />
