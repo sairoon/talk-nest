@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { AddUserIcon } from "../../svg/AddUser";
-import { getDatabase, onValue, push, ref, set } from "firebase/database";
+import {
+  getDatabase,
+  onValue,
+  push,
+  ref,
+  remove,
+  set,
+} from "firebase/database";
 import { useSelector } from "react-redux";
 import { getDownloadURL, getStorage, ref as Ref } from "firebase/storage";
 
@@ -10,6 +17,7 @@ const AllUsers = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [friendReqList, setFriendReqList] = useState([]);
+  const [cancelReq, setCancelReq] = useState([]);
 
   const storage = getStorage();
   const db = getDatabase();
@@ -72,12 +80,48 @@ const AllUsers = () => {
     const starCountRef = ref(db, "friendReq/");
     onValue(starCountRef, (snapshot) => {
       let reqArray = [];
+      let cancelReq = []; // Initialize cancelReq state
       snapshot.forEach((item) => {
         reqArray.push(item.val().receiverId + item.val().senderId);
+        cancelReq.push({ ...item.val(), id: item.key }); // Store cancelReq data
       });
       setFriendReqList(reqArray);
+      setCancelReq(cancelReq); // Update cancelReq state
     });
   }, [db]);
+
+  //unused cancel friend request start
+  /*   useEffect(() => {
+    const starCountRef = ref(db, "friendReq/");
+    onValue(starCountRef, (snapshot) => {
+      let cancelReq = [];
+      snapshot.forEach((item) => {
+        cancelReq.push({ ...item.val(), id: item.key });
+      });
+      setCancelReq(cancelReq);
+    });
+  }, [db]);
+
+  const handleCancelReq = (data) => {
+    // Find the specific friend request based on senderId and receiverId
+    const friendReqToCancel = cancelReq.find(
+      (item) => item.senderId === user.uid && item.receiverId === data.id
+    );
+
+    if (friendReqToCancel) {
+      remove(ref(db, `friendReq/${friendReqToCancel.id}`))
+    }
+  }; */
+  //unused cancel friend request end
+
+  const handleCancelReq = (itemId) => {
+    const reqToCancel = cancelReq.find(
+      (req) => req.senderId === user.uid && req.receiverId === itemId
+    );
+    if (reqToCancel) {
+      remove(ref(db, "friendReq/" + reqToCancel.id));
+    }
+  };
 
   return (
     <>
@@ -113,6 +157,7 @@ const AllUsers = () => {
                 <button
                   className="bg-rose-500 px-4 py-3 rounded-md text-white text-sm font-semibold active:scale-90 transition ease-out"
                   title="Cancel request"
+                  onClick={() => handleCancelReq(item.id)}
                 >
                   Cancel
                 </button>
@@ -123,7 +168,8 @@ const AllUsers = () => {
                 >
                   Requested
                 </button>
-              ) : ( // normal view
+              ) : (
+                // normal view
                 <div
                   className="text-black dark:text-white me-6 cursor-pointer scale-125 active:scale-105 transition ease-out"
                   title="Add friend"
