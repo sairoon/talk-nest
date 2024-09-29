@@ -86,7 +86,7 @@ const LoginFormComp = ({ toast }) => {
               className="w-full bg-transparent px-3 py-2 border border-slate-300 rounded-md outline-none mt-3 text-gray-800 dark:text-white"
             />
             {formik.errors.email && formik.touched.email ? (
-              <span className="text-red-500">{formik.errors.email}</span>
+              <span className="text-red-500 dark:text-red-400 font-normal">{formik.errors.email}</span>
             ) : null}
           </div>
 
@@ -115,7 +115,7 @@ const LoginFormComp = ({ toast }) => {
               )}
             </button>
             {formik.errors.password && formik.touched.password ? (
-              <span className="text-red-500">{formik.errors.password}</span>
+              <span className="text-red-500 dark:text-red-400 font-normal">{formik.errors.password}</span>
             ) : null}
           </div>
 
