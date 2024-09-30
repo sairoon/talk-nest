@@ -12,12 +12,13 @@ import { useSelector } from "react-redux";
 import { getDownloadURL, getStorage, ref as Ref } from "firebase/storage";
 
 const AllUsers = () => {
-  const user = useSelector((state) => state.login.loggedIn);
+  const user = useSelector((user) => user.login.loggedIn); //you can use state instead of user
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [friendReqList, setFriendReqList] = useState([]);
   const [cancelReq, setCancelReq] = useState([]);
+  const [friends, setFriends] = useState([]);
 
   const storage = getStorage();
   const db = getDatabase();
@@ -52,45 +53,7 @@ const AllUsers = () => {
     });
   }, [db, user.uid, storage]);
 
-  // Handler for search input changes
-  const handleSearch = (e) => {
-    const value = e.target.value.toLowerCase();
-    setSearchTerm(value);
-
-    const filtered = users.filter((item) =>
-      item.username.toLowerCase().includes(value)
-    );
-
-    setFilteredUsers(filtered);
-  };
-
-  const handleFriendReq = (data) => {
-    set(push(ref(db, "friendReq")), {
-      senderName: user.displayName,
-      senderId: user.uid,
-      senderPhoto: user.photoURL ?? "/img/avatar.jpg",
-
-      receiverName: data.username,
-      receiverId: data.id,
-      receiverPhoto: data.photoURL ?? "/img/avatar.jpg",
-    });
-  };
-  //send friend request
-  useEffect(() => {
-    const starCountRef = ref(db, "friendReq/");
-    onValue(starCountRef, (snapshot) => {
-      let reqArray = [];
-      let cancelReq = []; // Initialize cancelReq state
-      snapshot.forEach((item) => {
-        reqArray.push(item.val().receiverId + item.val().senderId);
-        cancelReq.push({ ...item.val(), id: item.key }); // Store cancelReq data
-      });
-      setFriendReqList(reqArray);
-      setCancelReq(cancelReq); // Update cancelReq state
-    });
-  }, [db]);
-
-  //unused cancel friend request start
+    //unused cancel friend request start
   /*   useEffect(() => {
     const starCountRef = ref(db, "friendReq/");
     onValue(starCountRef, (snapshot) => {
@@ -114,14 +77,74 @@ const AllUsers = () => {
   }; */
   //unused cancel friend request end
 
+  //send & cancel friend request
+  useEffect(() => {
+    const starCountRef = ref(db, "friendReq/");
+    onValue(starCountRef, (snapshot) => {
+      let reqArray = [];
+      let cancelReq = []; // Initialize cancelReq state
+      snapshot.forEach((item) => {
+        reqArray.push(item.val().receiverId + item.val().senderId);
+        cancelReq.push({ ...item.val(), id: item.key }); // Store cancelReq data
+      });
+      setFriendReqList(reqArray);
+      setCancelReq(cancelReq); // Update cancelReq state
+    });
+  }, [db]);
+
+  // show friends
+  useEffect(() => {
+    const starCountRef = ref(db, "friends/");
+    onValue(starCountRef, (snapshot) => {
+      let friendsArray = [];
+      snapshot.forEach((item) => {
+        if (
+          user.uid === item.val().senderId ||
+          user.uid === item.val().receiverId
+        ) {
+          friendsArray.push(
+            item.val().receiverId === user.uid
+              ? item.val().senderId
+              : item.val().receiverId
+          );
+        }
+      });
+      setFriends(friendsArray);
+    });
+  }, [db, user.uid]);
+
+  // Handler for search input changes
+  const handleSearch = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearchTerm(value);
+
+    const filtered = users.filter((item) =>
+      item.username.toLowerCase().includes(value)
+    );
+    setFilteredUsers(filtered);
+  };
+
+  const handleFriendReq = (data) => {
+    set(push(ref(db, "friendReq")), {
+      senderName: user.displayName,
+      senderId: user.uid,
+      senderPhoto: user.photoURL ?? "/img/avatar.jpg",
+
+      receiverName: data.username,
+      receiverId: data.id,
+      receiverPhoto: data.photoURL ?? "/img/avatar.jpg",
+    });
+  };
+
   const handleCancelReq = (itemId) => {
     const reqToCancel = cancelReq.find(
-      (req) => req.senderId === user.uid && req.receiverId === itemId
+      (req) => req.receiverId === itemId && req.senderId === user.uid
     );
     if (reqToCancel) {
       remove(ref(db, "friendReq/" + reqToCancel.id));
     }
   };
+
 
   return (
     <>
@@ -136,7 +159,6 @@ const AllUsers = () => {
           value={searchTerm}
           onChange={handleSearch}
         />
-
         {filteredUsers.length > 0 ? (
           filteredUsers.map((item, i) => (
             <div
@@ -163,10 +185,17 @@ const AllUsers = () => {
                 </button>
               ) : friendReqList.includes(user.uid + item.id) ? ( // receiver view
                 <button
-                  className="bg-sky-500 px-4 py-3 rounded-md text-white text-sm font-semibold cursor-default"
+                  className="bg-green-500 px-4 py-3 rounded-md text-white text-md font-semibold cursor-default"
                   title="Send you friend request"
                 >
                   Requested
+                </button>
+              ) : friends.includes(item.id) ? ( // if already your friend
+                <button
+                  className="bg-sky-500 px-4 py-3 rounded-md text-white text-sm font-semibold cursor-default"
+                  title="Friend"
+                >
+                  Friend
                 </button>
               ) : (
                 // normal view
@@ -181,9 +210,11 @@ const AllUsers = () => {
             </div>
           ))
         ) : (
-          <p className="text-xl py-2 font-medium text-red-700 bg-red-200 rounded-lg flex justify-center">
-            User not found
-          </p>
+          <div className="flex items-center justify-center h-[58%]">
+            <p className="text-xl font-medium dark:text-gray-200 text-gray-400">
+              User not found
+            </p>
+          </div>
         )}
       </div>
     </>
