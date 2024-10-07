@@ -43,7 +43,7 @@ const RegFormComp = ({ toast }) => {
       formik.values.password
     )
       .then(({ user }) => {
-        console.log(user);
+        // console.log(user);
         updateProfile(auth.currentUser, {
           displayName: formik.values.userName,
         }).then(() => {
@@ -84,6 +84,7 @@ const RegFormComp = ({ toast }) => {
                 progress: undefined,
                 theme: "dark",
               });
+              setLoader(false);
             });
         });
       })
@@ -120,6 +121,7 @@ const RegFormComp = ({ toast }) => {
             name="userName"
             value={formik.values.userName}
             onChange={formik.handleChange}
+            autoComplete="off"
             className="w-full bg-transparent px-3 py-2 border border-slate-300 rounded-md outline-none mt-3 text-gray-800 dark:text-white"
           />
           {formik.errors.userName && formik.touched.userName ? (
@@ -133,6 +135,7 @@ const RegFormComp = ({ toast }) => {
             name="email"
             value={formik.values.email}
             onChange={formik.handleChange}
+            autoComplete="off"
             className="w-full bg-transparent px-3 py-2 border border-slate-300 rounded-md outline-none mt-3 text-gray-800 dark:text-white"
           />
           {formik.errors.email && formik.touched.email ? (
@@ -149,6 +152,7 @@ const RegFormComp = ({ toast }) => {
             name="password"
             value={formik.values.password}
             onChange={formik.handleChange}
+            autoComplete="off"
             className="w-full bg-transparent ps-3 pe-10 py-2 border border-slate-300 rounded-md outline-none mt-3 text-gray-800 dark:text-white"
           />
           <button
@@ -180,6 +184,7 @@ const RegFormComp = ({ toast }) => {
             name="confirmPassword"
             value={formik.values.confirmPassword}
             onChange={formik.handleChange}
+            autoComplete="off"
             className="w-full bg-transparent ps-3 pe-10 py-2 border border-slate-300 rounded-md outline-none mt-3 text-gray-800 dark:text-white"
           />
           <button

@@ -50,11 +50,9 @@ const FriendReq = () => {
           Friend Requests
         </h1>
         {friendReqList.length === 0 ? ( // Conditional rendering for empty state
-          <div className="w-full h-[80%] flex items-center justify-center">
-            <p className="text-xl font-medium dark:text-gray-200 text-gray-400">
-              Looks like no one cares about you! 
-              {/* I use the above message for fun. you can change it to whatever you want. be creative! below is an example. */}
-              {/* You have no friend requests at the moment. */}
+          <div className="w-full h-[90%] flex items-center justify-center">
+            <p className="text-xl font-medium dark:text-gray-200 text-gray-400 cursor-default">
+              You have no friend requests at the moment.
             </p>
           </div>
         ) : (

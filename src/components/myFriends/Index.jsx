@@ -1,15 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const MyFriends = () => {
+  const[friends, setFriends] = useState([])
+  const location = useLocation()
+  const navigate = useNavigate()
+
   return (
     <>
       <div className="bg-transparent dark:bg-slate-600 shadow-lg rounded-[10px] py-5 px-6 h-full overflow-y-auto">
         <h1 className="text-[#494949] dark:text-white text-3xl font-semibold py-2">
           My Friends
         </h1>
-        <div className="flex items-center justify-between mt-6 cursor-pointer">
-        <div className="flex items-center gap-3 cursor-pointer">
-        <img src="https://picsum.photos/202" className="w-16 h-16 rounded-full" alt="friend-profile-pic"/>
+
+        <div
+          className="flex items-center justify-between mt-6 cursor-pointer"
+          onClick={() => {
+            navigate("/message")
+          }}
+        >
+          <div className="flex items-center gap-3 cursor-pointer">
+            <img
+              src="https://picsum.photos/202"
+              className="w-16 h-16 rounded-full"
+              alt="friend-profile-pic"
+            />
             <h3 className="text-2xl font-normal text-[#3D3C3C] dark:text-white">
               Friend's Name
             </h3>
@@ -26,9 +41,14 @@ const MyFriends = () => {
             </button>
           </div>
         </div>
+
         <div className="flex items-center justify-between mt-6">
           <div className="flex items-center gap-3 cursor-pointer">
-            <img src="https://picsum.photos/10" className="w-16 h-16 rounded-full" alt="friend-profile-pic"/>
+            <img
+              src="https://picsum.photos/10"
+              className="w-16 h-16 rounded-full"
+              alt="friend-profile-pic"
+            />
             <h3 className="text-2xl font-normal text-[#3D3C3C] dark:text-white">
               Friend's Name
             </h3>
@@ -43,8 +63,12 @@ const MyFriends = () => {
           </div>
         </div>
         <div className="flex items-center justify-between mt-6 cursor-pointer">
-        <div className="flex items-center gap-3 cursor-pointer">
-        <img src="https://picsum.photos/20" className="w-16 h-16 rounded-full" alt="friend-profile-pic"/>
+          <div className="flex items-center gap-3 cursor-pointer">
+            <img
+              src="https://picsum.photos/20"
+              className="w-16 h-16 rounded-full"
+              alt="friend-profile-pic"
+            />
             <h3 className="text-2xl font-normal text-[#3D3C3C] dark:text-white">
               Friend's Name
             </h3>

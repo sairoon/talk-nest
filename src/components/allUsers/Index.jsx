@@ -18,7 +18,7 @@ const AllUsers = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [friendReqList, setFriendReqList] = useState([]);
   const [cancelReq, setCancelReq] = useState([]);
-  const [friends, setFriends] = useState([]);
+  const [friendStatus, setFriendStatus] = useState([]);
 
   const storage = getStorage();
   const db = getDatabase();
@@ -92,7 +92,7 @@ const AllUsers = () => {
     });
   }, [db]);
 
-  // show friends
+  // show friend status
   useEffect(() => {
     const starCountRef = ref(db, "friends/");
     onValue(starCountRef, (snapshot) => {
@@ -109,7 +109,7 @@ const AllUsers = () => {
           );
         }
       });
-      setFriends(friendsArray);
+      setFriendStatus(friendsArray);
     });
   }, [db, user.uid]);
 
@@ -148,7 +148,7 @@ const AllUsers = () => {
 
   return (
     <>
-      <div className="bg-transparent dark:bg-slate-600 shadow-lg rounded-[10px] py-5 px-6 h-full overflow-y-auto">
+      <div className="bg-transparent dark:bg-slate-600 shadow-lg rounded-[10px] py-5 px-6 h-full overflow-y-auto relative">
         <h1 className="text-3xl font-semibold text-[#494949] dark:text-white py-2">
           All Users
         </h1>
@@ -190,7 +190,7 @@ const AllUsers = () => {
                 >
                   Requested
                 </button>
-              ) : friends.includes(item.id) ? ( // if already your friend
+              ) : friendStatus.includes(item.id) ? ( // if already your friend
                 <button
                   className="bg-sky-500 px-4 py-3 rounded-md text-white text-sm font-semibold cursor-default"
                   title="Friend"
@@ -210,7 +210,7 @@ const AllUsers = () => {
             </div>
           ))
         ) : (
-          <div className="flex items-center justify-center h-[58%]">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
             <p className="text-xl font-medium dark:text-gray-200 text-gray-400">
               User not found
             </p>

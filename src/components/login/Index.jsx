@@ -72,31 +72,40 @@ const LoginFormComp = ({ toast }) => {
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
+  
   return (
     <>
       <div>
         <form onSubmit={formik.handleSubmit}>
           <div className="my-3">
-            <label className="text-[#484848] dark:text-white">Enter Email</label>
+            <label className="text-[#484848] dark:text-white">
+              Enter Email
+            </label>
             <input
               type="email"
               name="email"
+              autoComplete="email"
               value={formik.values.email}
               onChange={formik.handleChange}
               className="w-full bg-transparent px-3 py-2 border border-slate-300 rounded-md outline-none mt-3 text-gray-800 dark:text-white"
             />
             {formik.errors.email && formik.touched.email ? (
-              <span className="text-red-500 dark:text-red-400 font-normal">{formik.errors.email}</span>
+              <span className="text-red-500 dark:text-red-400 font-normal">
+                {formik.errors.email}
+              </span>
             ) : null}
           </div>
 
           <div className="mt-5 mb-3 relative">
-            <label className="text-[#484848] dark:text-white">Enter Password</label>
+            <label className="text-[#484848] dark:text-white">
+              Enter Password
+            </label>
             <input
               type={showPassword ? "text" : "password"}
               name="password"
               value={formik.values.password}
               onChange={formik.handleChange}
+              autoComplete="current-password"
               className="w-full bg-transparent ps-3 pe-10 py-2 border border-slate-300 rounded-md outline-none mt-3 text-gray-800 dark:text-white"
             />
             <button
@@ -115,7 +124,9 @@ const LoginFormComp = ({ toast }) => {
               )}
             </button>
             {formik.errors.password && formik.touched.password ? (
-              <span className="text-red-500 dark:text-red-400 font-normal">{formik.errors.password}</span>
+              <span className="text-red-500 dark:text-red-400 font-normal">
+                {formik.errors.password}
+              </span>
             ) : null}
           </div>
 
@@ -132,7 +143,7 @@ const LoginFormComp = ({ toast }) => {
           </button>
         </form>
         <p className="text-base font-normal text-[#4A4A4A] dark:text-white underline cursor-pointer mt-6 hover:text-purple-700 dark:hover:text-purple-300">
-          forgot password?
+          <Link to="/forgot-password">forgot password?</Link>
         </p>
         <p className="text-base font-normal text-black dark:text-white mt-6 mb-6">
           Don’t have an account please{" "}
