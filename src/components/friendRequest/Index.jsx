@@ -30,7 +30,7 @@ const FriendReq = () => {
       setFriendReqList(friendReq);
     });
   }, [db, user.uid]);
-
+// accept friend request
   const handleAccept = (data) => {
     set(push(ref(db, "friends")), {
       ...data,
@@ -39,27 +39,28 @@ const FriendReq = () => {
       remove(ref(db, "friendReq/" + data.id));
     });
   };
+// reject friend request
   const handleReject = (data) => {
     remove(ref(db, "friendReq/" + data.id));
   };
 
   return (
     <>
-      <div className="bg-transparent dark:bg-slate-600 shadow-lg rounded-[10px] py-5 px-6 h-full overflow-y-auto">
-        <h1 className="text-[#494949] dark:text-white text-3xl font-semibold py-2">
+      <div className="bg-transparent dark:bg-slate-600 shadow-lg rounded-[10px] py-5 h-full overflow-y-auto">
+        <h1 className="text-[#494949] dark:text-white text-3xl font-semibold py-2 px-6 mb-3">
           Friend Requests
         </h1>
         {friendReqList.length === 0 ? ( // Conditional rendering for empty state
           <div className="w-full h-[90%] flex items-center justify-center">
             <p className="text-xl font-medium dark:text-gray-200 text-gray-400 cursor-default">
-              You have no friend requests at the moment.
+              You have no friend requests at this moment
             </p>
           </div>
         ) : (
-          friendReqList.map((item) => (
+          friendReqList?.map((item) => (
             <div
-              key={item.id}
-              className="flex items-center justify-between mt-6 cursor-default"
+            className="flex items-center justify-between hover:bg-gray-100 hover:dark:bg-slate-700 px-6 py-3 transition-all ease-linear duration-150 cursor-default"
+            key={item.id}
             >
               <div className="flex items-center gap-3">
                 <img
@@ -67,7 +68,7 @@ const FriendReq = () => {
                   className="w-16 h-16 rounded-full"
                   alt="user-img"
                 />
-                <h3 className="text-2xl font-normal text-[#3D3C3C] dark:text-white">
+                <h3 className="text-2xl font-normal text-[#3D3C3C] dark:text-white capitalize">
                   {item.senderName}
                 </h3>
               </div>

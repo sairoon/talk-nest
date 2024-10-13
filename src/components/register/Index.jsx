@@ -122,7 +122,7 @@ const RegFormComp = ({ toast }) => {
             value={formik.values.userName}
             onChange={formik.handleChange}
             autoComplete="off"
-            className="w-full bg-transparent px-3 py-2 border border-slate-300 rounded-md outline-none mt-3 text-gray-800 dark:text-white"
+            className="w-full bg-transparent px-3 py-2 border capitalize border-slate-300 rounded-md outline-none mt-3 text-gray-800 dark:text-white"
           />
           {formik.errors.userName && formik.touched.userName ? (
             <span className="text-red-500 dark:text-red-400 font-normal">{formik.errors.userName}</span>

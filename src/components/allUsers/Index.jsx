@@ -10,6 +10,7 @@ import {
 } from "firebase/database";
 import { useSelector } from "react-redux";
 import { getDownloadURL, getStorage, ref as Ref } from "firebase/storage";
+import { useNavigate } from "react-router-dom";
 
 const AllUsers = () => {
   const user = useSelector((user) => user.login.loggedIn); //you can use state instead of user
@@ -19,6 +20,7 @@ const AllUsers = () => {
   const [friendReqList, setFriendReqList] = useState([]);
   const [cancelReq, setCancelReq] = useState([]);
   const [friendStatus, setFriendStatus] = useState([]);
+  // const navigate = useNavigate();
 
   const storage = getStorage();
   const db = getDatabase();
@@ -53,7 +55,7 @@ const AllUsers = () => {
     });
   }, [db, user.uid, storage]);
 
-    //unused cancel friend request start
+  //unused cancel friend request start
   /*   useEffect(() => {
     const starCountRef = ref(db, "friendReq/");
     onValue(starCountRef, (snapshot) => {
@@ -145,24 +147,25 @@ const AllUsers = () => {
     }
   };
 
-
   return (
     <>
-      <div className="bg-transparent dark:bg-slate-600 shadow-lg rounded-[10px] py-5 px-6 h-full overflow-y-auto relative">
-        <h1 className="text-3xl font-semibold text-[#494949] dark:text-white py-2">
-          All Users
-        </h1>
-        <input
-          type="search"
-          className="my-6 rounded-[10px] py-3 px-4 w-full bg-[#F8F8F8] dark:bg-slate-700 outline-none text-2xl font-normal text-gray-600 dark:text-gray-300"
-          placeholder="Search User.."
-          value={searchTerm}
-          onChange={handleSearch}
-        />
+      <div className="bg-transparent dark:bg-slate-600 shadow-lg rounded-[10px] py-5 h-full overflow-y-auto relative">
+        <div className="px-6">
+          <h1 className="text-3xl font-semibold text-[#494949] dark:text-white py-2">
+            All Users
+          </h1>
+          <input
+            type="search"
+            className="my-6 rounded-[10px] py-3 px-4 w-full bg-[#F8F8F8] dark:bg-slate-700 outline-none text-2xl font-normal text-gray-600 dark:text-gray-300 mb-5 caret-purple-500"
+            placeholder="Search User.."
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+        </div>
         {filteredUsers.length > 0 ? (
           filteredUsers.map((item, i) => (
             <div
-              className="flex items-center justify-between mt-4 cursor-default"
+              className="flex items-center justify-between px-6 py-3 hover:bg-gray-100 dark:hover:bg-slate-500 transition-all duration-150 ease-out cursor-default"
               key={i}
             >
               <div className="flex items-center gap-2">
@@ -171,7 +174,7 @@ const AllUsers = () => {
                   className="w-16 h-16 rounded-full"
                   alt="user-img"
                 />
-                <h3 className="text-2xl font-medium text-[#3D3C3C] dark:text-white">
+                <h3 className="text-2xl font-medium text-[#3D3C3C] dark:text-white capitalize">
                   {item.username}
                 </h3>
               </div>
@@ -190,10 +193,13 @@ const AllUsers = () => {
                 >
                   Requested
                 </button>
-              ) : friendStatus.includes(item.id) ? ( // if already your friend
+              ) : friendStatus.includes(item.id) ? ( // if already friend
                 <button
                   className="bg-sky-500 px-4 py-3 rounded-md text-white text-sm font-semibold cursor-default"
                   title="Friend"
+                  // onClick={() => {
+                  //   navigate("/message");
+                  // }}
                 >
                   Friend
                 </button>
