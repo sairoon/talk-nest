@@ -51,7 +51,7 @@ const Navber = () => {
             {user.displayName}
           </span>
         </div>
-        <div className="flex flex-col items-center gap-y-10 pb-12 cursor-pointer">
+        <nav className="flex flex-col items-center gap-y-10 pb-12 cursor-pointer">
           <Link
             to={"/"}
             className="text-white relative active:scale-90 transition ease-out"
@@ -70,7 +70,7 @@ const Navber = () => {
               <span className="absolute -top-2 -right-[50px] w-2 h-16 bg-white dark:bg-slate-800 cursor-auto"></span>
             )}
           </Link>
-        </div>
+        </nav>
         <button
           className="flex items-center gap-x-2 text-white font-semibold text-xl pb-10 cursor-pointer hover:scale-105 active:scale-95 transition ease-out"
           onClick={handleLogout}
