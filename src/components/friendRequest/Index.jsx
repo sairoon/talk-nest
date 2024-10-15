@@ -30,16 +30,15 @@ const FriendReq = () => {
       setFriendReqList(friendReq);
     });
   }, [db, user.uid]);
-// accept friend request
+  // accept friend request
   const handleAccept = (data) => {
     set(push(ref(db, "friends")), {
       ...data,
-    })
-    .then(() => {
+    }).then(() => {
       remove(ref(db, "friendReq/" + data.id));
     });
   };
-// reject friend request
+  // reject friend request
   const handleReject = (data) => {
     remove(ref(db, "friendReq/" + data.id));
   };
@@ -59,8 +58,8 @@ const FriendReq = () => {
         ) : (
           friendReqList?.map((item) => (
             <div
-            className="flex items-center justify-between hover:bg-gray-100 hover:dark:bg-slate-700 px-6 py-3 transition-all ease-linear duration-150 cursor-default"
-            key={item.id}
+              className="flex items-center justify-between hover:bg-gray-100 hover:dark:bg-slate-700 px-6 py-3 transition-all ease-linear duration-150 cursor-default"
+              key={item.id}
             >
               <div className="flex items-center gap-3">
                 <img

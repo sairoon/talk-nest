@@ -218,7 +218,7 @@ const AllUsers = () => {
         ) : (
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
             <p className="text-xl font-medium dark:text-gray-200 text-gray-400">
-              User not found
+              User not available
             </p>
           </div>
         )}

@@ -54,16 +54,23 @@ const LoginFormComp = ({ toast }) => {
       })
       .catch((error) => {
         if (error.message.includes("auth/invalid-credential")) {
-          toast.error("Email or Password is incorrect. Please try again.", {
-            position: "bottom-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: false,
-            progress: undefined,
-            theme: "dark",
-          });
+          toast.error(
+            <>
+              Invalid credentials.
+              <br />
+              Please try again.
+            </>,
+            {
+              position: "bottom-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: false,
+              progress: undefined,
+              theme: "dark",
+            }
+          );
           setLoader(false);
         }
       });
@@ -72,7 +79,7 @@ const LoginFormComp = ({ toast }) => {
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
-  
+
   return (
     <>
       <div>

@@ -5,6 +5,7 @@ import { GalleryIcon } from "../../svg/Gallery";
 import { useSelector } from "react-redux";
 import { getDatabase, onValue, push, ref, set } from "firebase/database";
 import { formatDistance } from "date-fns";
+import EmojiPicker from "emoji-picker-react";
 
 const Chatting = () => {
   const user = useSelector((user) => user.login.loggedIn); //you can use state instead of user
@@ -13,6 +14,7 @@ const Chatting = () => {
   );
   const [messages, setMessages] = useState("");
   const [allMessages, setAllMessages] = useState([]);
+  const [showEmoji, setShowEmoji] = useState(false);
 
   const db = getDatabase();
 
@@ -30,6 +32,7 @@ const Chatting = () => {
         }-${new Date().getDate()}-${new Date().getHours()}:${new Date().getMinutes()}`,
       }).then(() => {
         setMessages("");
+        setShowEmoji(false);
       });
     }
   };
@@ -61,6 +64,11 @@ const Chatting = () => {
   }, [activeFriend?.id]);
   // }, [db, user.uid, activeFriend?.id]);
 
+  // emoji picker
+  const handleEmojiClick = ({ emoji }) => {
+    setMessages(messages + emoji + " ");
+  };
+
   return (
     <>
       <div className="bg-transparent shadow-xl rounded-[10px] h-full col-span-2 overflow-hidden relative">
@@ -72,54 +80,75 @@ const Chatting = () => {
             alt="friends-profile-pic"
           />
           <div className="text-black dark:text-white text-xl font-medium capitalize">
-            {activeFriend?.name || "Please select a friend"}
+            {activeFriend?.name || " "}
           </div>
         </div>
         {/* message container */}
         <div className="w-full h-[90%] bg-white dark:bg-slate-600 overflow-y-auto px-8 pt-4 pb-[116px] scroll-smooth">
           {activeFriend?.status === "single" ? (
-            allMessages.map((item, i) => (
-              <div key={i}>
-                {item.whoSendId === user.uid ? (
-                  // sender message
-                  <div className="flex justify-end">
-                    <div className="text-slate-800 dark:text-white font-normal text-xl bg-purple-200 dark:bg-violet-500 px-4 pt-3 inline-block rounded-[10px] rounded-br-none my-2 relative max-w-[60%]">
-                      {item.message}
-                      <h6 className="text-black dark:text-gray-100 font-extralight text-xs text-end pb-2">
-                        {formatDistance(
-                          item.date.replace(/-/g, "/"), // without replace, "item.date" not working from my end
-                          new Date(),
-                          {
-                            addSuffix: true,
-                          }
-                        )}
-                      </h6>
-                      <span className="w-0 h-0 border-t-[25px] border-l-[25px] border-transparent rounded-[10px] border-l-purple-200 dark:border-l-violet-500 absolute -right-4 bottom-0"></span>
-                    </div>
-                  </div>
-                ) : (
-                  // receiver message 
-                  <div className="w-[60%] mr-auto">
-                    <div className="text-black dark:text-white font-normal text-xl bg-slate-200 dark:bg-stone-700 px-4 pt-3 inline-block rounded-[10px] my-2 relative ">
-                      {item.message}
-                      <h6 className="text-black dark:text-gray-300 font-extralight text-xs text-end pb-2">
-                        {formatDistance(
-                          new Date(item.date.replace(/-/g, "/")),
-                          new Date(),
-                          {
-                            addSuffix: true,
-                          }
-                        )}
-                      </h6>
-                      <span className="w-0 h-0 border-l-[25px] border-l-transparent border-r-[25px] border-r-transparent border-t-[25px] border-t-slate-200 dark:border-t-stone-700 rounded-[10px] absolute -left-4 top-0"></span>
-                    </div>
-                  </div>
-                )}
+            // if there is no message
+            allMessages.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full w-full">
+                <img
+                  src={activeFriend?.photo || "/img/avatar.jpg"}
+                  alt="friend's image"
+                  className="w-44 h-w-44 rounded-full mb-3"
+                />
+                <p className="text-slate-800 dark:text-white font-medium text-2xl mb-10">
+                  You are now connected with {activeFriend?.name}
+                </p>
+                <p className="text-slate-800 dark:text-white font-light text-lg">
+                  No message here yet
+                </p>
+                <p className="text-slate-800 dark:text-white font-light text-lg">
+                  Send a message to start conversation
+                </p>
               </div>
-            ))
+            ) : (
+              // if there is message
+              allMessages.map((item, i) => (
+                <div key={i}>
+                  {item.whoSendId === user.uid ? (
+                    // sender message
+                    <div className="flex justify-end">
+                      <div className="text-slate-800 dark:text-white font-normal text-xl bg-purple-200 dark:bg-violet-500 px-4 pt-3 inline-block rounded-[10px] rounded-br-none my-2 relative max-w-[60%]">
+                        {item.message}
+                        <h6 className="text-black dark:text-gray-100 font-extralight text-xs text-end pb-2">
+                          {formatDistance(
+                            item.date.replace(/-/g, "/"), // without replace, "item.date" not working from my end
+                            new Date(),
+                            {
+                              addSuffix: true,
+                            }
+                          )}
+                        </h6>
+                        <span className="w-0 h-0 border-t-[25px] border-l-[25px] border-transparent rounded-[10px] border-l-purple-200 dark:border-l-violet-500 absolute -right-4 bottom-0"></span>
+                      </div>
+                    </div>
+                  ) : (
+                    // receiver message
+                    <div className="w-[60%] mr-auto">
+                      <div className="text-black dark:text-white font-normal text-xl bg-slate-200 dark:bg-stone-700 px-4 pt-3 inline-block rounded-[10px] my-2 relative ">
+                        {item.message}
+                        <h6 className="text-black dark:text-gray-300 font-extralight text-xs text-end pb-2">
+                          {formatDistance(
+                            new Date(item.date.replace(/-/g, "/")),
+                            new Date(),
+                            {
+                              addSuffix: true,
+                            }
+                          )}
+                        </h6>
+                        <span className="w-0 h-0 border-l-[25px] border-l-transparent border-r-[25px] border-r-transparent border-t-[25px] border-t-slate-200 dark:border-t-stone-700 rounded-[10px] absolute -left-4 top-0"></span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))
+            )
           ) : (
-            <div className="flex justify-center items-center h-full w-full text-3xl font-semibold text-gray-700 dark:text-gray-200 pt-20">
-              Please Select A Friend To Start Chat
+            <div className="flex justify-center items-center h-full w-full text-3xl font-semibold text-gray-500 dark:text-gray-200 pt-20">
+              Please Select A Friend To Start Chatting
             </div>
           )}
           {/* sender img */}
@@ -127,7 +156,7 @@ const Chatting = () => {
             <div className="max-w-[60%] my-2 px-2 py-2 bg-purple-200 dark:bg-violet-500 rounded-[10px] rounded-br-none relative">
               <img
                 src="/img/avatar.jpg"
-                className="max-w-full max-h-96 rounded-[10px]"
+                className="max-w-full max-h-96 rounded-[10px] shadow-md"
                 alt="chatting-image"
               />
               <h6 className="text-white font-extralight text-sm text-end absolute bottom-3 right-3 bg-black px-3 py-1 rounded-full opacity-30 ">
@@ -141,7 +170,7 @@ const Chatting = () => {
             <div className="max-w-[60%] my-2 px-2 py-2 bg-slate-200 dark:bg-stone-700 rounded-[10px] rounded-tl-none relative">
               <img
                 src="/img/avatar.jpg"
-                className="max-w-full max-h-96 rounded-[10px]"
+                className="max-w-full max-h-96 rounded-[10px] shadow-md"
                 alt="chatting-image"
               />
               <h6 className="text-white font-extralight text-sm text-end absolute bottom-3 right-3 bg-black px-3 py-1 rounded-full opacity-30 ">
@@ -160,8 +189,18 @@ const Chatting = () => {
                   <div className="text-black dark:text-white cursor-pointer active:scale-90 transition ease-out">
                     <VoiceIcon />
                   </div>
-                  <div className="text-black dark:text-white cursor-pointer active:scale-90 transition ease-out">
-                    <EmojiIcon />
+                  <div className=" relative">
+                    <div
+                      className="text-black dark:text-white cursor-pointer active:scale-90 transition ease-out"
+                      onClick={() => setShowEmoji((prev) => !prev)}
+                    >
+                      <EmojiIcon />
+                    </div>
+                    {showEmoji && (
+                      <div className="absolute bottom-16 left-0  bg-red-500 rounded-full">
+                        <EmojiPicker onEmojiClick={handleEmojiClick} />
+                      </div>
+                    )}
                   </div>
                   <div className="text-black dark:text-white cursor-pointer active:scale-90 transition ease-out">
                     <GalleryIcon />
@@ -172,6 +211,7 @@ const Chatting = () => {
                   type="text"
                   placeholder="type here...."
                   onChange={(e) => setMessages(e.target.value)}
+                  onClick={() => setShowEmoji(false)}
                   value={messages}
                 />
                 <button

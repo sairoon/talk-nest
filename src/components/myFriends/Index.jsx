@@ -80,51 +80,61 @@ const MyFriends = () => {
         <h1 className="text-[#494949] dark:text-white text-3xl font-semibold py-2 px-6 mb-3">
           My Friends
         </h1>
-
-        {friends?.map((item) => (
-          <div
-            className="flex items-center justify-between py-3 px-6 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all duration-150 ease-out"
-            key={item.id}
-          >
-            <div
-              className="flex items-center gap-3 cursor-pointer"
-              onClick={() => handleActiveChat(item)}
-            >
-              {user.uid === item.receiverId ? (
-                <img
-                  src={item.senderPhoto || "img/avatar.jpg"}
-                  className="w-16 h-16 rounded-full"
-                  alt="friend-profile-pic"
-                />
-              ) : (
-                <img
-                  src={item.receiverPhoto || "img/avatar.jpg"}
-                  className="w-16 h-16 rounded-full"
-                  alt="friend-profile-pic"
-                />
-              )}
-              <h3 className="text-2xl font-normal text-[#3D3C3C] dark:text-white capitalize select-none">
-                {user.uid === item.senderId
-                  ? item.receiverName
-                  : item.senderName}
-              </h3>
-            </div>
-            <div className="flex items-center gap-x-2">
-              <button
-                className="bg-[#4A81D3] dark:bg-sky-600 px-8 py-3 rounded-md font-medium text-sm text-white active:scale-90 transition ease-out"
-                title="Click to unfriend"
-              >
-                Unfriend
-              </button>
-              <button
-                className="bg-[#D34A4A] dark:bg-red-500 px-8 py-3 rounded-md font-medium text-sm text-white active:scale-90 transition ease-out"
-                title="Click to block"
-              >
-                Block
-              </button>
-            </div>
+        {friends?.length === 0 ? (
+          <div className="w-full h-[90%] flex flex-col items-center justify-center">
+            <p className="text-xl font-medium dark:text-gray-200 text-gray-400 cursor-default">
+              Looks like no one cares about you!
+            </p>
+            <p className="text-base font-normal dark:text-gray-200 text-gray-500 cursor-default mt-2">
+              send friend request to make friends
+            </p>
           </div>
-        ))}
+        ) : (
+          friends?.map((item) => (
+            <div
+              className="flex items-center justify-between py-3 px-6 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all duration-150 ease-out"
+              key={item.id}
+            >
+              <div
+                className="flex items-center gap-3 cursor-pointer"
+                onClick={() => handleActiveChat(item)}
+              >
+                {user.uid === item.receiverId ? (
+                  <img
+                    src={item.senderPhoto || "img/avatar.jpg"}
+                    className="w-16 h-16 rounded-full"
+                    alt="friend-profile-pic"
+                  />
+                ) : (
+                  <img
+                    src={item.receiverPhoto || "img/avatar.jpg"}
+                    className="w-16 h-16 rounded-full"
+                    alt="friend-profile-pic"
+                  />
+                )}
+                <h3 className="text-xl font-medium text-[#3D3C3C] dark:text-white capitalize select-none ">
+                  {user.uid === item.senderId
+                    ? item.receiverName
+                    : item.senderName}
+                </h3>
+              </div>
+              <div className="flex items-center gap-x-2">
+                <button
+                  className="bg-[#4A81D3] dark:bg-sky-600 px-4 py-3 rounded-md font-medium text-sm text-white active:scale-90 transition ease-out"
+                  title="Click to unfriend"
+                >
+                  Unfriend
+                </button>
+                <button
+                  className="bg-[#D34A4A] dark:bg-red-500 px-6 py-3 rounded-md font-medium text-sm text-white active:scale-90 transition ease-out"
+                  title="Click to block"
+                >
+                  Block
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </>
   );
