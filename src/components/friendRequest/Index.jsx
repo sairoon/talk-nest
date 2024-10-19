@@ -1,3 +1,7 @@
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import Lottie from "lottie-react";
+import noFriendReq from "../../animations/mosal.json";
 import {
   getDatabase,
   onValue,
@@ -6,8 +10,6 @@ import {
   remove,
   set,
 } from "firebase/database";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 
 const FriendReq = () => {
   const [friendReqList, setFriendReqList] = useState([]);
@@ -50,9 +52,10 @@ const FriendReq = () => {
           Friend Requests
         </h1>
         {friendReqList.length === 0 ? ( // Conditional rendering for empty state
-          <div className="w-full h-[90%] flex items-center justify-center">
+          <div className="w-full h-[90%] flex flex-col items-center justify-center">
+            <Lottie animationData={noFriendReq} loop={true} />
             <p className="text-xl font-medium dark:text-gray-200 text-gray-400 cursor-default">
-              You have no friend requests at this moment
+              You have no friend request at this moment
             </p>
           </div>
         ) : (

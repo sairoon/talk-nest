@@ -5,6 +5,7 @@ import { GalleryIcon } from "../../svg/Gallery";
 import { useSelector } from "react-redux";
 import { getDatabase, onValue, push, ref, set } from "firebase/database";
 import { formatDistance } from "date-fns";
+import { AudioRecorder, useAudioRecorder } from "react-audio-voice-recorder";
 import {
   getDownloadURL,
   getStorage,
@@ -12,6 +13,8 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import EmojiPicker from "emoji-picker-react";
+import Lottie from "lottie-react";
+import selectFriend from "../../animations/select-friend.json";
 
 const Chatting = () => {
   const user = useSelector((user) => user.login.loggedIn); //you can use state instead of user
@@ -21,6 +24,7 @@ const Chatting = () => {
   const storage = getStorage();
   const fileRef = useRef(null);
   const autoScrollRef = useRef(null);
+  const recorderRef = useRef(null);
   const [messages, setMessages] = useState("");
   const [allMessages, setAllMessages] = useState([]);
   const [showEmoji, setShowEmoji] = useState(false);
@@ -67,20 +71,13 @@ const Chatting = () => {
             (item.val().whoSendId === activeFriend?.id &&
               item.val().whoReceiveId === user.uid)
           ) {
-            singleChatArray.push(
-              item.val()
-              // {
-              //   ...item.val(),
-              //   id: item.key,
-              // }
-            );
+            singleChatArray.push(item.val());
           }
         });
         setAllMessages(singleChatArray);
       });
     }
   }, [activeFriend?.id]);
-  // }, [db, user.uid, activeFriend?.id]);
 
   // emoji picker
   const handleEmojiClick = ({ emoji }) => {
@@ -118,7 +115,7 @@ const Chatting = () => {
       }
       // Clear any previous error if file is valid
       setError(null);
-      
+
       // Proceed with the upload if validation passes
       const storageRef = Ref(
         storage,
@@ -158,18 +155,33 @@ const Chatting = () => {
       );
     }
   };
-
+  // auto scroll
   useEffect(() => {
+    autoScrollRef.current?.scrollIntoView({ behavior: "smooth" });
     // if (autoScrollRef.current) {
     //   autoScrollRef.current.scrollIntoView({ behavior: "smooth" });
     // }
-    autoScrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, allMessages, error]);
 
   const handleSendBtn = (e) => {
     if (e.key === "Enter") {
       handleSendMessage();
     }
+  };
+  // audio recorder
+  const recorderControls = useAudioRecorder(
+    {
+      noiseSuppression: true,
+      echoCancellation: true,
+    },
+    (err) => console.table(err) // onNotAllowedOrFound
+  );
+  const addAudioElement = (blob) => {
+    const url = URL.createObjectURL(blob);
+    const audio = document.createElement("audio");
+    audio.src = url;
+    audio.controls = true;
+    document.body.appendChild(audio);
   };
 
   return (
@@ -181,6 +193,7 @@ const Chatting = () => {
             src={activeFriend?.photo || "/img/avatar.jpg"}
             className="w-16 h-16 rounded-full"
             alt="friends-profile-pic"
+            loading="lazy"
           />
           <div className="text-black dark:text-white text-xl font-medium capitalize">
             {activeFriend?.name || " "}
@@ -194,8 +207,9 @@ const Chatting = () => {
               <div className="flex flex-col items-center justify-center h-full w-full">
                 <img
                   src={activeFriend?.photo || "/img/avatar.jpg"}
-                  alt="friend's image"
                   className="w-44 h-44 rounded-full mb-3"
+                  alt="friend's image"
+                  loading="lazy"
                 />
                 <p className="text-slate-800 dark:text-white font-medium text-2xl mb-10">
                   You are now connected with {activeFriend?.name}
@@ -235,6 +249,7 @@ const Chatting = () => {
                             src={item.image}
                             className="max-w-full max-h-96 rounded-[10px] shadow-md"
                             alt="chatting-image"
+                            loading="lazy"
                           />
                           <h6 className="text-white font-extralight text-sm text-end absolute bottom-3 right-3 bg-black px-3 py-1 rounded-full opacity-60 ">
                             {formatDistance(
@@ -270,6 +285,7 @@ const Chatting = () => {
                             src={item.image}
                             className="max-w-full max-h-96 rounded-[10px] shadow-md"
                             alt="chatting-image"
+                            loading="lazy"
                           />
                           <h6 className="text-white font-extralight text-sm text-end absolute bottom-3 right-3 bg-black px-3 py-1 rounded-full opacity-60">
                             {formatDistance(
@@ -287,8 +303,9 @@ const Chatting = () => {
               ))
             )
           ) : (
-            <div className="flex justify-center items-center h-full w-full text-3xl font-semibold text-gray-500 dark:text-gray-200 pt-20">
-              Please Select A Friend To Start Chatting
+            <div className="flex flex-col justify-center items-center h-full w-full text-3xl font-semibold text-gray-400 dark:text-gray-200 pt-20">
+              <Lottie animationData={selectFriend} loop={true} />
+              <p>Please select a friend to start chatting</p>
             </div>
           )}
         </div>
@@ -299,7 +316,10 @@ const Chatting = () => {
             {activeFriend?.status === "single" ? (
               <div className="h-20 w-[90%] bg-[#F5F5F5] dark:bg-slate-700 rounded-[10px] flex items-center justify-between z-10">
                 <div className="flex items-center gap-x-3 px-3 ms-4">
-                  <div className="text-black dark:text-white cursor-pointer active:scale-90 transition ease-out">
+                  <div
+                    className="text-black dark:text-white cursor-pointer active:scale-90 transition ease-out"
+                    onClick={() => recorderRef.current.click()}
+                  >
                     <VoiceIcon />
                   </div>
                   <div className="relative">
@@ -329,13 +349,23 @@ const Chatting = () => {
                     />
                   </div>
                 </div>
+                {/* voice recorder */}
+                <div ref={recorderRef}>
+                  <AudioRecorder
+                    onRecordingComplete={(blob) => addAudioElement(blob)}
+                    recorderControls={recorderControls}
+                    // downloadOnSavePress={true}
+                    // downloadFileExtension="mp3"
+                    showVisualizer={true}
+                  />
+                </div>
                 {error ? (
                   <p className="text-red-600 w-full text-base font-semibold my-2 text-center bg-red-200 py-3 rounded-[10px] mx-4 transition ease-out duration-150">
                     {error}
                   </p>
                 ) : (
                   <input
-                    className="w-full h-[80%] outline-none bg-transparent text-[#C8C8C8] px-4 font-medium text-xl align-middle"
+                    className="w-full h-[80%] outline-none bg-transparent text-[#C8C8C8] px-4 font-medium text-xl align-middle caret-purple-500"
                     type="text"
                     placeholder="type here...."
                     onChange={(e) => setMessages(e.target.value)}

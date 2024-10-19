@@ -10,7 +10,8 @@ import {
 } from "firebase/database";
 import { useSelector } from "react-redux";
 import { getDownloadURL, getStorage, ref as Ref } from "firebase/storage";
-import { useNavigate } from "react-router-dom";
+import Lottie from "lottie-react";
+import noUser from "../../animations/no-user.json";
 
 const AllUsers = () => {
   const user = useSelector((user) => user.login.loggedIn); //you can use state instead of user
@@ -20,7 +21,6 @@ const AllUsers = () => {
   const [friendReqList, setFriendReqList] = useState([]);
   const [cancelReq, setCancelReq] = useState([]);
   const [friendStatus, setFriendStatus] = useState([]);
-  // const navigate = useNavigate();
 
   const storage = getStorage();
   const db = getDatabase();
@@ -197,9 +197,6 @@ const AllUsers = () => {
                 <button
                   className="bg-sky-500 px-4 py-3 rounded-md text-white text-sm font-semibold cursor-default"
                   title="Friend"
-                  // onClick={() => {
-                  //   navigate("/message");
-                  // }}
                 >
                   Friend
                 </button>
@@ -217,7 +214,8 @@ const AllUsers = () => {
           ))
         ) : (
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-            <p className="text-xl font-medium dark:text-gray-200 text-gray-400">
+            <Lottie animationData={noUser} loop={true} />
+            <p className="text-xl font-medium dark:text-gray-200 text-gray-400 text-center">
               User not available
             </p>
           </div>
