@@ -1,4 +1,4 @@
-import { getDatabase, onValue, ref } from "firebase/database";
+import { getDatabase, onValue, ref, remove } from "firebase/database";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -14,12 +14,12 @@ const MyFriends = () => {
   );
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const location = useLocation(); // Track current page
-
+  const location = useLocation();
   const db = getDatabase();
 
-  useEffect(() => {
+  const getFriend = () => {
     const starCountRef = ref(db, "friends/");
+
     onValue(starCountRef, (snapshot) => {
       let friendArr = [];
       snapshot.forEach((item) => {
@@ -35,6 +35,10 @@ const MyFriends = () => {
       });
       setFriends(friendArr);
     });
+  };
+
+  useEffect(() => {
+    getFriend();
   }, [db, user.uid]);
 
   const handleActiveChat = (data) => {
@@ -83,10 +87,15 @@ const MyFriends = () => {
       navigate("/message", { data });
     }
   };
-
-  // const handleRemoveFriend = (id) => {
-  //   remove(ref(db, `friends/${id}`));
-  // };
+  // unfriend
+  const handleUnfriend = (id) => {
+    const unfriend = friends.find((req) => req.id == id);
+    if (unfriend) {
+      remove(ref(db, "friends/" + unfriend.id)).then(() => {
+        getFriend();
+      });
+    }
+  };
 
   return (
     <>
@@ -145,7 +154,7 @@ const MyFriends = () => {
                 <button
                   className="bg-[#4A81D3] dark:bg-sky-600 px-4 py-3 rounded-md font-medium text-sm text-white active:scale-90 transition ease-out"
                   title="Click to unfriend"
-                  // onClick={() => handleRemoveFriend(item.id)}
+                  onClick={() => handleUnfriend(item.id)}
                 >
                   Unfriend
                 </button>

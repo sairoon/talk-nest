@@ -349,8 +349,9 @@ const Chatting = () => {
                     />
                   </div>
                 </div>
-                {/* voice recorder */}
-                <div ref={recorderRef}>
+                {/*MARK: voice
+                 */}
+                <div ref={recorderRef} className="hidden">
                   <AudioRecorder
                     onRecordingComplete={(blob) => addAudioElement(blob)}
                     recorderControls={recorderControls}
