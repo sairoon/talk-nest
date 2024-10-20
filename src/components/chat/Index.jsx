@@ -365,7 +365,7 @@ const Chatting = () => {
                   </p>
                 ) : (
                   <input
-                    className="w-full h-[80%] outline-none bg-transparent text-[#C8C8C8] px-4 font-medium text-xl align-middle caret-purple-500"
+                    className="w-full h-[80%] outline-none bg-transparent placeholder:text-[#C8C8C8] text-gray-600 dark:text-gray-300 px-4 font-medium text-xl align-middle caret-purple-500"
                     type="text"
                     placeholder="type here...."
                     onChange={(e) => setMessages(e.target.value)}

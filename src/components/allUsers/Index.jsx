@@ -156,8 +156,8 @@ const AllUsers = () => {
           </h1>
           <input
             type="search"
-            className="my-6 rounded-[10px] py-3 px-4 w-full bg-[#F8F8F8] dark:bg-slate-700 outline-none text-2xl font-normal text-gray-600 dark:text-gray-300 mb-5 caret-purple-500"
-            placeholder="Search User.."
+            className="my-6 rounded-[10px] py-3 px-4 w-full bg-[#F8F8F8] dark:bg-slate-700 outline-none text-2xl font-normal text-gray-600 dark:text-gray-300 placeholder:text-[#CBCBCB] mb-5 caret-purple-500"
+            placeholder="Search User..."
             value={searchTerm}
             onChange={handleSearch}
           />

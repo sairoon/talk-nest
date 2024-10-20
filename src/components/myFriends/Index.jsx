@@ -84,9 +84,9 @@ const MyFriends = () => {
     }
   };
 
-  const handleRemoveFriend = (id) => {
-    remove(ref(db, `friends/${id}`));
-  };
+  // const handleRemoveFriend = (id) => {
+  //   remove(ref(db, `friends/${id}`));
+  // };
 
   return (
     <>
@@ -145,7 +145,7 @@ const MyFriends = () => {
                 <button
                   className="bg-[#4A81D3] dark:bg-sky-600 px-4 py-3 rounded-md font-medium text-sm text-white active:scale-90 transition ease-out"
                   title="Click to unfriend"
-                  onClick={() => handleRemoveFriend(item.id)}
+                  // onClick={() => handleRemoveFriend(item.id)}
                 >
                   Unfriend
                 </button>

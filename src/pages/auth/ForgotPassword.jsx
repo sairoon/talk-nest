@@ -1,10 +1,14 @@
 import React from "react";
 import ForgotPassComp from "../../components/forgotPass";
 import { toast, ToastContainer } from "react-toastify";
+import { Helmet } from "react-helmet-async";
 
 const ForgotPassword = () => {
   return (
     <>
+    <Helmet>
+      <title>TalkNest | Forgot Password</title>
+    </Helmet>
       <ToastContainer />
       <div className="w-full h-screen bg-white dark:bg-slate-800 flex flex-col justify-center items-center">
         <h1 className="font-normal font-titleFont mb-3 text-[80px] text-black dark:text-white">

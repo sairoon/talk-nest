@@ -149,7 +149,7 @@ const LoginFormComp = ({ toast }) => {
             )}
           </button>
         </form>
-        <p className="text-base font-normal text-[#4A4A4A] dark:text-white underline cursor-pointer mt-6 hover:text-purple-700 dark:hover:text-purple-300">
+        <p className="text-base font-normal text-[#4A4A4A] inline-block dark:text-white underline cursor-pointer mt-6 hover:text-purple-700 dark:hover:text-purple-300">
           <Link to="/forgot-password">forgot password?</Link>
         </p>
         <p className="text-base font-normal text-black dark:text-white mt-6 mb-6">
