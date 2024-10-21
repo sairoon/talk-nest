@@ -11,7 +11,7 @@ import {
 import { useSelector } from "react-redux";
 import { getDownloadURL, getStorage, ref as Ref } from "firebase/storage";
 import Lottie from "lottie-react";
-import noUser from "../../animations/no-user.json";
+import noUser from "../../animations/not-available.json";
 
 const AllUsers = () => {
   const user = useSelector((user) => user.login.loggedIn); //you can use state instead of user

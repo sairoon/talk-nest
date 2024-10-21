@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Lottie from "lottie-react";
-import noFriendReq from "../../animations/mosal.json";
+import noFriendReq from "../../animations/torch.json";
 import {
   getDatabase,
   onValue,
