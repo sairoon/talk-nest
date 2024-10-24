@@ -110,6 +110,10 @@ const Modal = ({ setShow }) => {
                 <UploadIcon />
               </span>
               <h3>Click here to upload image</h3>
+              <h5 className="text-base text-slate-500 dark:text-slate-300 font-semibold">
+                ( jpg, png, webp )
+              </h5>
+              <h6 className="text-sm text-slate-500 dark:text-slate-300 mt-8">Max size: 2MB</h6>
               <input
                 type="file"
                 ref={fileRef}
