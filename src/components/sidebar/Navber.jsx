@@ -8,6 +8,8 @@ import { getAuth, signOut } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { LoggedOutUsers } from "../../features/slices/LoginSlice";
 import Modal from "../modal/Index";
+import Lottie from "lottie-react";
+import blankUser from "../../animations/blank-user.json";
 
 const Navber = () => {
   const [show, setShow] = useState(false);
@@ -34,11 +36,19 @@ const Navber = () => {
       <aside className="w-[166px] h-full dark:bg-[#352481] bg-[#5E3493] flex flex-col justify-between items-center text-black py-3">
         <div className="flex flex-col items-center gap-y-2 pt-4">
           <div className="relative group">
-            <img
-              src={user.photoURL || "/img/avatar.jpg"}
-              className="w-[106px] h-[106px] rounded-full flex object-cover items-center justify-center"
-              alt="my-profile-pic"
-            />
+            {user.photoURL ? (
+              <img
+                src={user.photoURL}
+                className="w-[106px] h-[106px] rounded-full flex object-cover items-center justify-center"
+                alt="my-profile-pic"
+              />
+            ) : (
+              <Lottie
+                animationData={blankUser}
+                loop={true}
+                className="w-[106px] h-[106px] rounded-full"
+              />
+            )}
             <div
               className="absolute top-1/2 left-1/2 rounded-full opacity-0 transform -translate-x-1/2 -translate-y-1/2 text-white z-20 group-hover:opacity-100 cursor-pointer transition ease-out active:scale-90"
               onClick={() => setShow(true)}
