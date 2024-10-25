@@ -180,7 +180,7 @@ const AllUsers = () => {
               </div>
               {friendReqList.includes(item.id + user.uid) ? ( // sender view
                 <button
-                  className="bg-rose-500 px-4 py-3 rounded-md text-white text-sm font-semibold active:scale-90 transition ease-out"
+                  className="bg-[#D34A4A] px-5 py-3 rounded-md text-white text-sm font-medium active:scale-90 transition ease-out"
                   title="Cancel request"
                   onClick={() => handleCancelReq(item.id)}
                 >
@@ -188,14 +188,14 @@ const AllUsers = () => {
                 </button>
               ) : friendReqList.includes(user.uid + item.id) ? ( // receiver view
                 <button
-                  className="bg-green-500 px-4 py-3 rounded-md text-white text-md font-semibold cursor-default"
+                  className="bg-green-500 px-4 py-3 rounded-md text-white text-sm font-semibold cursor-default"
                   title="Send you friend request"
                 >
-                  Requested
+                  Request
                 </button>
               ) : friendStatus.includes(item.id) ? ( // if already friend
                 <button
-                  className="bg-sky-500 px-4 py-3 rounded-md text-white text-sm font-semibold cursor-default"
+                  className="bg-sky-500 px-5 py-3 rounded-md text-white text-sm font-semibold cursor-default"
                   title="Friend"
                 >
                   Friend

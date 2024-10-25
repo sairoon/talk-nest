@@ -1,4 +1,4 @@
-import { getDatabase, onValue, ref, remove } from "firebase/database";
+import { getDatabase, onValue, ref, remove, update } from "firebase/database";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -97,6 +97,70 @@ const MyFriends = () => {
     }
   };
 
+  const handleBlock = (itemId) => {
+    // console.log(itemId);
+
+    const toBlock = friends.find((req) => req.id == itemId);
+    if (toBlock) {
+      const blockData = {
+        id: toBlock.id,
+        isBlocked: true,
+        receiverId: toBlock.receiverId,
+        receiverName: toBlock.receiverName,
+        receiverPhoto: toBlock.receiverPhoto,
+
+        senderId: toBlock.senderId,
+        senderName: toBlock.senderName,
+        senderPhoto: toBlock.senderPhoto,
+      };
+      const updates = {};
+      updates["friends/" + itemId] = blockData;
+      update(ref(db), updates).then(() => {
+        dispatch(
+          ActiveChat({
+            status: "single",
+            id: activeFriend.id,
+            name: activeFriend.name,
+            photo: activeFriend.photo,
+            isBlocked: true,
+          })
+        );
+        getFriend();
+      });
+    }
+  };
+  // MARK: Unblock
+  const handleUnBlock = (itemId) => {
+    const toBlock = friends.find((req) => req.id == itemId);
+    if (toBlock) {
+      const blockData = {
+        id: toBlock.id,
+        isBlocked: false,
+        receiverId: toBlock.receiverId,
+        receiverName: toBlock.receiverName,
+        receiverPhoto: toBlock.receiverPhoto,
+
+        senderId: toBlock.senderId,
+        senderName: toBlock.senderName,
+        senderPhoto: toBlock.senderPhoto,
+      };
+      const updates = {};
+      updates["friends/" + itemId] = blockData;
+      update(ref(db), updates).then(() => {
+        dispatch(
+          ActiveChat({
+            status: "single",
+            id: activeFriend.id,
+            name: activeFriend.name,
+            photo: activeFriend.photo,
+            isBlocked: false,
+          })
+        );
+        getFriend();
+      });
+    }
+  };
+
   return (
     <>
       <div className="bg-transparent dark:bg-slate-600 shadow-lg rounded-[10px] py-5 h-full overflow-y-auto">
@@ -123,33 +187,56 @@ const MyFriends = () => {
               className={`flex items-center justify-between py-3 px-6 transition-all duration-150 ease-out ${
                 location.pathname === "/message" && activeFriend === item.id
                   ? "bg-gray-200 dark:bg-slate-700" // Active state styles
-                  : "hover:bg-gray-100 dark:hover:bg-slate-700"
+                  : "hover:bg-gray-100 dark:hover:bg-slate-500"
               }`}
               key={item.id}
             >
-              <div
-                className="flex items-center gap-3 cursor-pointer"
-                onClick={() => handleActiveChat(item)}
-              >
-                {user.uid === item.receiverId ? (
-                  <img
-                    src={item.senderPhoto || "img/avatar.jpg"}
-                    className="w-16 h-16 rounded-full"
-                    alt="friend-profile-pic"
-                  />
-                ) : (
-                  <img
-                    src={item.receiverPhoto || "img/avatar.jpg"}
-                    className="w-16 h-16 rounded-full"
-                    alt="friend-profile-pic"
-                  />
-                )}
-                <h3 className="text-xl font-medium text-[#3D3C3C] dark:text-white capitalize select-none ">
-                  {user.uid === item.senderId
-                    ? item.receiverName
-                    : item.senderName}
-                </h3>
-              </div>
+              {!item?.isBlocked ? (
+                <div
+                  className="flex items-center gap-3 cursor-pointer"
+                  onClick={() => handleActiveChat(item)}
+                >
+                  {user.uid === item.receiverId ? (
+                    <img
+                      src={item.senderPhoto || "img/avatar.jpg"}
+                      className="w-16 h-16 rounded-full"
+                      alt="friend-profile-pic"
+                    />
+                  ) : (
+                    <img
+                      src={item.receiverPhoto || "img/avatar.jpg"}
+                      className="w-16 h-16 rounded-full"
+                      alt="friend-profile-pic"
+                    />
+                  )}
+                  <h3 className="text-xl font-medium text-[#3D3C3C] dark:text-white capitalize select-none ">
+                    {user.uid === item.senderId
+                      ? item.receiverName
+                      : item.senderName}
+                  </h3>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3 cursor-not-allowed">
+                  {user.uid === item.receiverId ? (
+                    <img
+                      src={item.senderPhoto || "img/avatar.jpg"}
+                      className="w-16 h-16 rounded-full"
+                      alt="friend-profile-pic"
+                    />
+                  ) : (
+                    <img
+                      src={item.receiverPhoto || "img/avatar.jpg"}
+                      className="w-16 h-16 rounded-full"
+                      alt="friend-profile-pic"
+                    />
+                  )}
+                  <h3 className="text-xl font-medium text-[#3D3C3C] dark:text-white capitalize select-none ">
+                    {user.uid === item.senderId
+                      ? item.receiverName
+                      : item.senderName}
+                  </h3>
+                </div>
+              )}
               <div className="flex items-center gap-x-2">
                 <button
                   className="bg-[#4A81D3] dark:bg-sky-600 px-4 py-3 rounded-md font-medium text-sm text-white active:scale-90 transition ease-out"
@@ -158,16 +245,56 @@ const MyFriends = () => {
                 >
                   Unfriend
                 </button>
-                <button
-                  className="bg-[#D34A4A] dark:bg-red-500 px-6 py-3 rounded-md font-medium text-sm text-white active:scale-90 transition ease-out"
-                  title="Click to block"
-                >
-                  Block
-                </button>
+                {!item.isBlocked && (
+                  <button
+                    className="bg-[#D34A4A] dark:bg-red-500 px-6 py-3 rounded-md font-medium text-sm text-white active:scale-90 transition ease-out"
+                    title="Click to block"
+                    onClick={() => handleBlock(item.id)}
+                  >
+                    Block
+                  </button>
+                )}
+                {item.isBlocked && (
+                  <button
+                    className="bg-violet-600 dark:bg-violet-500 px-4 py-3 rounded-md font-semibold text-sm text-white active:scale-90 transition ease-out"
+                    title="Click to unblock"
+                    onClick={() => handleUnBlock(item.id)}
+                  >
+                    Unblock
+                  </button>
+                )}
               </div>
             </div>
           ))
         )}
+        {/* <div className="flex items-center justify-between py-3 px-6 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all duration-150 ease-out">
+          <div className="flex items-center gap-3 cursor-pointer">
+            <img
+              src="https://picsum.photos/10"
+              className="w-16 h-16 rounded-full"
+              alt="friend-profile-pic"
+            />
+            <h3 className="text-xl font-medium text-[#3D3C3C] dark:text-white">
+              Friend's Name
+            </h3>
+          </div>
+          <div className="flex items-center gap-x-3">
+            if blocked by you
+            <button
+              className="bg-violet-600 dark:bg-violet-500 px-4 py-3 rounded-md font-semibold text-sm text-white active:scale-90 transition ease-out"
+              title="Click to unblock"
+            >
+              Unblock
+            </button>
+            if your friend block you
+            <button
+              className="bg-amber-400 px-4 py-3 rounded-md font-semibold text-sm text-black cursor-default"
+              title="You're blocked"
+            >
+              Blocked
+            </button>
+          </div>
+        </div> */}
       </div>
     </>
   );

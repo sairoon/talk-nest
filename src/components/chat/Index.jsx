@@ -10,6 +10,7 @@ import {
   getDownloadURL,
   getStorage,
   ref as Ref,
+  uploadBytes,
   uploadBytesResumable,
 } from "firebase/storage";
 import EmojiPicker from "emoji-picker-react";
@@ -24,7 +25,6 @@ const Chatting = () => {
   const storage = getStorage();
   const fileRef = useRef(null);
   const autoScrollRef = useRef(null);
-  const recorderRef = useRef(null);
   const [messages, setMessages] = useState("");
   const [allMessages, setAllMessages] = useState([]);
   const [showEmoji, setShowEmoji] = useState(false);
@@ -177,11 +177,40 @@ const Chatting = () => {
     (err) => console.table(err) // onNotAllowedOrFound
   );
   const addAudioElement = (blob) => {
+    // const uid = Date.now() + Math.random().toString(32);
+    const uid = Date.now().toString(32);
     const url = URL.createObjectURL(blob);
     const audio = document.createElement("audio");
     audio.src = url;
     audio.controls = true;
-    document.body.appendChild(audio);
+    // document.body.appendChild(audio);
+    const storageRef = Ref(
+      storage,
+      `${user.displayName} = voiceMessages/${uid}`
+    );
+    const metadata = {
+      contentType: "audio/mp3",
+    };
+
+    uploadBytes(storageRef, blob, metadata).then((snapshot) => {
+      getDownloadURL(snapshot.ref).then((downloadURL) => {
+        set(push(ref(db, "singleChat")), {
+          whoSendName: user.displayName,
+          whoSendId: user.uid,
+
+          whoReceiveName: activeFriend?.name,
+          whoReceiveId: activeFriend?.id,
+          message: messages,
+          audio: downloadURL,
+          date: `${new Date().getFullYear()}-${
+            new Date().getMonth() + 1
+          }-${new Date().getDate()}-${new Date().getHours()}:${new Date().getMinutes()}`,
+        }).then(() => {
+          setShowEmoji(false); // Hide emoji picker after sending
+          setMessages(""); // Clear message input field
+        });
+      });
+    });
   };
 
   return (
@@ -212,7 +241,7 @@ const Chatting = () => {
                   loading="lazy"
                 />
                 <p className="text-slate-800 dark:text-white font-medium text-2xl mb-10">
-                  You are now connected with {activeFriend?.name}
+                  You are now connected with {activeFriend?.name || "none"}
                 </p>
                 <p className="text-slate-800 dark:text-white font-light text-lg">
                   No message here yet
@@ -261,6 +290,20 @@ const Chatting = () => {
                           <span className="w-0 h-0 border-t-[25px] border-l-[25px] border-transparent rounded-[10px] border-l-purple-200 dark:border-l-violet-500 absolute -right-4 bottom-0"></span>
                         </div>
                       )}
+                      {/* sender's audio */}
+                      {item.audio && (
+                        <div className="max-w-[60%] my-1 px-2 py-2 bg-purple-200 dark:bg-violet-500 rounded-[10px] rounded-br-none relative">
+                          <audio src={item.audio} className="bg-slate-100 shadow-md rounded-[10px]" controls></audio>
+                           <h6 className="text-black dark:text-gray-100 font-extralight text-xs text-end mt-1">
+                            {formatDistance(
+                              item.date.replace(/-/g, "/"), 
+                              new Date(),
+                              { addSuffix: true }
+                            )}
+                          </h6> 
+                          <span className="w-0 h-0 border-t-[25px] border-l-[25px] border-transparent rounded-[10px] border-l-purple-200 dark:border-l-violet-500 absolute -right-4 bottom-0"></span>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     // receiver's message
@@ -297,6 +340,20 @@ const Chatting = () => {
                           <span className="w-0 h-0 border-r-[21px] border-b-[25px] border-transparent border-r-slate-200 dark:border-r-stone-700 rounded-[10px] rounded-tr-none absolute -left-4 top-0"></span>
                         </div>
                       )}
+                      {/* receiver's audio */}
+                      {item.audio && (
+                        <div className="max-w-[60%] my-1 px-2 py-2 bg-slate-200 dark:bg-stone-700 rounded-[10px] rounded-tl-none relative">
+                          <audio src={item.audio} className="bg-slate-100 shadow-md rounded-[10px]" controls></audio>
+                           <h6 className="text-black dark:text-gray-100 font-extralight text-xs text-end mt-1">
+                            {formatDistance(
+                              item.date.replace(/-/g, "/"),
+                              new Date(),
+                              { addSuffix: true }
+                            )}
+                          </h6> 
+                          <span className="w-0 h-0 border-r-[21px] border-b-[25px] border-transparent border-r-slate-200 dark:border-r-stone-700 rounded-[10px] rounded-tr-none absolute -left-4 top-0"></span>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -314,74 +371,85 @@ const Chatting = () => {
         <div className="absolute bottom-0 w-full">
           <div className="h-[116px] w-full bg-[#ffffff80] dark:bg-[#4755697a] backdrop-blur-sm dark:backdrop-blur-md flex rounded-b-lg items-center justify-center relative">
             {activeFriend?.status === "single" ? (
-              <div className="h-20 w-[90%] bg-[#F5F5F5] dark:bg-slate-700 rounded-[10px] flex items-center justify-between z-10">
-                <div className="flex items-center gap-x-3 px-3 ms-4">
-                  <div
-                    className="text-black dark:text-white cursor-pointer active:scale-90 transition ease-out"
-                    onClick={() => recorderRef.current.click()}
-                  >
-                    <VoiceIcon />
+              <>
+                {/* message input section */}
+                {activeFriend?.isBlocked ? (
+                  <div className="w-full flex items-center justify-center">
+                    <p className="text-red-600 w-[90%] text-base font-semibold text-center bg-red-200 py-3 rounded-[10px] z-20">
+                      You have been blocked
+                    </p>
                   </div>
-                  <div className="relative">
-                    <div
-                      className="text-black dark:text-white cursor-pointer active:scale-90 transition ease-out"
-                      onClick={() => setShowEmoji((prev) => !prev)}
-                    >
-                      <EmojiIcon />
-                    </div>
-                    {showEmoji && (
-                      <div className="absolute bottom-16 left-0">
-                        <EmojiPicker onEmojiClick={handleEmojiClick} />
-                      </div>
-                    )}
-                  </div>
-                  <div
-                    className="text-black dark:text-white cursor-pointer active:scale-90 transition ease-out"
-                    onClick={() => fileRef.current.click()}
-                  >
-                    <GalleryIcon />
-                    <input
-                      type="file"
-                      hidden
-                      ref={fileRef}
-                      accept="image/jpeg, image/png, image/webp, image/gif"
-                      onChange={handleFile}
-                    />
-                  </div>
-                </div>
-                {/*MARK: voice
-                 */}
-                <div ref={recorderRef} className="hidden">
-                  <AudioRecorder
-                    onRecordingComplete={(blob) => addAudioElement(blob)}
-                    recorderControls={recorderControls}
-                    // downloadOnSavePress={true}
-                    // downloadFileExtension="mp3"
-                    showVisualizer={true}
-                  />
-                </div>
-                {error ? (
-                  <p className="text-red-600 w-full text-base font-semibold my-2 text-center bg-red-200 py-3 rounded-[10px] mx-4 transition ease-out duration-150">
-                    {error}
-                  </p>
                 ) : (
-                  <input
-                    className="w-full h-[80%] outline-none bg-transparent placeholder:text-[#C8C8C8] dark:placeholder:text-slate-400 text-gray-600 dark:text-gray-300 px-4 font-medium text-xl align-middle caret-purple-500"
-                    type="text"
-                    placeholder="type here...."
-                    onChange={(e) => setMessages(e.target.value)}
-                    onClick={() => setShowEmoji(false)}
-                    value={messages}
-                    onKeyUp={handleSendBtn}
-                  />
+                  <div className="h-20 w-[90%] bg-[#F5F5F5] dark:bg-slate-700 rounded-[10px] flex items-center justify-between z-10">
+                    <div className="flex items-center gap-x-3 px-3 ms-4">
+                      <div
+                        className="text-black dark:text-white cursor-pointer active:scale-90 transition ease-out"
+                        onClick={() => recorderControls.startRecording()}
+                      >
+                        <VoiceIcon />
+                      </div>
+                      <div className="relative">
+                        <div
+                          className="text-black dark:text-white cursor-pointer active:scale-90 transition ease-out"
+                          onClick={() => setShowEmoji((prev) => !prev)}
+                        >
+                          <EmojiIcon />
+                        </div>
+                        {showEmoji && (
+                          <div className="absolute bottom-16 left-0">
+                            <EmojiPicker onEmojiClick={handleEmojiClick} />
+                          </div>
+                        )}
+                      </div>
+                      <div
+                        className="text-black dark:text-white cursor-pointer active:scale-90 transition ease-out"
+                        onClick={() => fileRef.current.click()}
+                      >
+                        <GalleryIcon />
+                        <input
+                          type="file"
+                          hidden
+                          ref={fileRef}
+                          accept="image/jpeg, image/png, image/webp, image/gif"
+                          onChange={handleFile}
+                        />
+                      </div>
+                    </div>
+                    {/*MARK: voice
+                     */}
+                    <div
+                      className={!recorderControls.isRecording ? "hidden" : ""}
+                    >
+                      <AudioRecorder
+                        onRecordingComplete={(blob) => addAudioElement(blob)}
+                        recorderControls={recorderControls}
+                        showVisualizer={true}
+                      />
+                    </div>
+                    {error ? (
+                      <p className="text-red-600 w-full text-base font-semibold my-2 text-center bg-red-200 py-3 rounded-[10px] mx-4 transition ease-out duration-150">
+                        {error}
+                      </p>
+                    ) : (
+                      <input
+                        className="w-full h-[80%] outline-none bg-transparent placeholder:text-[#C8C8C8] dark:placeholder:text-slate-400 text-gray-600 dark:text-gray-300 px-4 font-medium text-xl align-middle caret-purple-500"
+                        type="text"
+                        placeholder="type here...."
+                        onChange={(e) => setMessages(e.target.value)}
+                        onClick={() => setShowEmoji(false)}
+                        value={messages}
+                        onKeyUp={handleSendBtn}
+                      />
+                    )}
+                    <button
+                      className="bg-[#3e8ceb] dark:bg-cyan-600 py-4 px-10 rounded-[10px] font-medium text-white text-xl me-3 active:scale-95 transition ease-out"
+                      onClick={handleSendMessage}
+                    >
+                      Send
+                    </button>
+                  </div>
                 )}
-                <button
-                  className="bg-[#3e8ceb] dark:bg-cyan-600 py-4 px-10 rounded-[10px] font-medium text-white text-xl me-3 active:scale-95 transition ease-out"
-                  onClick={handleSendMessage}
-                >
-                  Send
-                </button>
-              </div>
+              </>
             ) : null}
             <div className="w-20 h-full absolute right-0 top-0 bg-gradient-to-r from-transparent to-white dark:to-slate-600 z-0"></div>
           </div>
