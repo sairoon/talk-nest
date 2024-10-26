@@ -10,8 +10,10 @@ import {
 } from "firebase/database";
 import { useSelector } from "react-redux";
 import { getDownloadURL, getStorage, ref as Ref } from "firebase/storage";
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 import Lottie from "lottie-react";
 import noUser from "../../animations/not-available.json";
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const AllUsers = () => {
   const user = useSelector((user) => user.login.loggedIn); //you can use state instead of user
@@ -169,10 +171,11 @@ const AllUsers = () => {
               key={i}
             >
               <div className="flex items-center gap-2">
-                <img
+                <LazyLoadImage
                   src={item.photoURL || "/img/avatar.jpg"}
                   className="w-16 h-16 rounded-full"
                   alt="user-img"
+                  effect="blur"
                 />
                 <h3 className="text-2xl font-medium text-[#3D3C3C] dark:text-white capitalize">
                   {item.username}

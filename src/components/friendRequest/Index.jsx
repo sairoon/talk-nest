@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import Lottie from "lottie-react";
-import noFriendReq from "../../animations/torch.json";
 import {
   getDatabase,
   onValue,
@@ -10,6 +8,10 @@ import {
   remove,
   set,
 } from "firebase/database";
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import Lottie from "lottie-react";
+import noFriendReq from "../../animations/torch.json";
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const FriendReq = () => {
   const [friendReqList, setFriendReqList] = useState([]);
@@ -65,10 +67,11 @@ const FriendReq = () => {
               key={item.id}
             >
               <div className="flex items-center gap-3">
-                <img
+                <LazyLoadImage
                   src={item.senderPhoto || "img/avatar.jpg"}
                   className="w-16 h-16 rounded-full"
                   alt="user-img"
+                  effect="blur"
                 />
                 <h3 className="text-2xl font-normal text-[#3D3C3C] dark:text-white capitalize">
                   {item.senderName}

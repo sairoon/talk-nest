@@ -1,10 +1,12 @@
-import { getDatabase, onValue, ref, remove, update } from "firebase/database";
 import React, { useEffect, useState } from "react";
+import { getDatabase, onValue, ref, remove, update } from "firebase/database";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ActiveChat } from "../../features/slices/ActiveChatSlice";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 import Lottie from "lottie-react";
 import noFriend from "../../animations/no-friend.json";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 const MyFriends = () => {
   const user = useSelector((user) => user.login.loggedIn);
@@ -191,52 +193,37 @@ const MyFriends = () => {
               }`}
               key={item.id}
             >
-              {!item?.isBlocked ? (
-                <div
-                  className="flex items-center gap-3 cursor-pointer"
-                  onClick={() => handleActiveChat(item)}
-                >
-                  {user.uid === item.receiverId ? (
-                    <img
-                      src={item.senderPhoto || "img/avatar.jpg"}
-                      className="w-16 h-16 rounded-full"
-                      alt="friend-profile-pic"
-                    />
-                  ) : (
-                    <img
-                      src={item.receiverPhoto || "img/avatar.jpg"}
-                      className="w-16 h-16 rounded-full"
-                      alt="friend-profile-pic"
-                    />
-                  )}
-                  <h3 className="text-xl font-medium text-[#3D3C3C] dark:text-white capitalize select-none ">
-                    {user.uid === item.senderId
-                      ? item.receiverName
-                      : item.senderName}
-                  </h3>
-                </div>
-              ) : (
-                <div className="flex items-center gap-3 cursor-not-allowed">
-                  {user.uid === item.receiverId ? (
-                    <img
-                      src={item.senderPhoto || "img/avatar.jpg"}
-                      className="w-16 h-16 rounded-full"
-                      alt="friend-profile-pic"
-                    />
-                  ) : (
-                    <img
-                      src={item.receiverPhoto || "img/avatar.jpg"}
-                      className="w-16 h-16 rounded-full"
-                      alt="friend-profile-pic"
-                    />
-                  )}
-                  <h3 className="text-xl font-medium text-[#3D3C3C] dark:text-white capitalize select-none ">
-                    {user.uid === item.senderId
-                      ? item.receiverName
-                      : item.senderName}
-                  </h3>
-                </div>
-              )}
+              <div
+                {...(!item?.isBlocked
+                  ? {
+                      onClick: () => handleActiveChat(item),
+                      className: "flex items-center gap-3 cursor-pointer",
+                    }
+                  : {
+                      className: "flex items-center gap-3 cursor-not-allowed",
+                    })}
+              >
+                {user.uid === item.receiverId ? (
+                  <LazyLoadImage
+                    src={item.senderPhoto || "img/avatar.jpg"}
+                    className="w-16 h-16 rounded-full "
+                    alt="friend-profile-pic"
+                    effect="blur"
+                  />
+                ) : (
+                  <LazyLoadImage
+                    src={item.receiverPhoto || "img/avatar.jpg"}
+                    className="w-16 h-16 rounded-full"
+                    alt="friend-profile-pic"
+                    effect="blur"
+                  />
+                )}
+                <h3 className="text-xl font-medium text-[#3D3C3C] dark:text-white capitalize select-none ">
+                  {user.uid === item.senderId
+                    ? item.receiverName
+                    : item.senderName}
+                </h3>
+              </div>
               <div className="flex items-center gap-x-2">
                 <button
                   className="bg-[#4A81D3] dark:bg-sky-600 px-4 py-3 rounded-md font-medium text-sm text-white active:scale-90 transition ease-out"
@@ -267,34 +254,12 @@ const MyFriends = () => {
             </div>
           ))
         )}
-        {/* <div className="flex items-center justify-between py-3 px-6 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all duration-150 ease-out">
-          <div className="flex items-center gap-3 cursor-pointer">
-            <img
-              src="https://picsum.photos/10"
-              className="w-16 h-16 rounded-full"
-              alt="friend-profile-pic"
-            />
-            <h3 className="text-xl font-medium text-[#3D3C3C] dark:text-white">
-              Friend's Name
-            </h3>
-          </div>
-          <div className="flex items-center gap-x-3">
-            if blocked by you
-            <button
-              className="bg-violet-600 dark:bg-violet-500 px-4 py-3 rounded-md font-semibold text-sm text-white active:scale-90 transition ease-out"
-              title="Click to unblock"
-            >
-              Unblock
-            </button>
-            if your friend block you
-            <button
-              className="bg-amber-400 px-4 py-3 rounded-md font-semibold text-sm text-black cursor-default"
-              title="You're blocked"
-            >
-              Blocked
-            </button>
-          </div>
-        </div> */}
+        {/* <button
+          className="bg-amber-400 px-4 py-3 rounded-md font-semibold text-sm text-black cursor-default"
+          title="You're blocked"
+        >
+          Blocked
+        </button> */}
       </div>
     </>
   );

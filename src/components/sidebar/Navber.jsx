@@ -7,9 +7,11 @@ import { UploadIcon } from "../../svg/Upload";
 import { getAuth, signOut } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { LoggedOutUsers } from "../../features/slices/LoginSlice";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 import Modal from "../modal/Index";
 import Lottie from "lottie-react";
 import blankUser from "../../animations/blank-user.json";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 const Navber = () => {
   const [show, setShow] = useState(false);
@@ -37,10 +39,11 @@ const Navber = () => {
         <div className="flex flex-col items-center gap-y-2 pt-4">
           <div className="relative group">
             {user.photoURL ? (
-              <img
+              <LazyLoadImage
                 src={user.photoURL}
                 className="w-[106px] h-[106px] rounded-full flex object-cover items-center justify-center"
                 alt="my-profile-pic"
+                effect="blur"
               />
             ) : (
               <Lottie
@@ -82,7 +85,7 @@ const Navber = () => {
           </Link>
         </nav>
         <button
-          className="flex items-center gap-x-2 text-white font-semibold text-xl pb-10 cursor-pointer hover:scale-105 active:scale-95 transition ease-out"
+          className="flex items-center gap-x-2 text-white font-semibold text-xl mb-10 cursor-pointer hover:scale-105 active:scale-95 transition ease-out"
           onClick={handleLogout}
         >
           <span>

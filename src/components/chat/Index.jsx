@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { getDatabase, onValue, push, ref, set } from "firebase/database";
 import { formatDistance } from "date-fns";
 import { AudioRecorder, useAudioRecorder } from "react-audio-voice-recorder";
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 import {
   getDownloadURL,
   getStorage,
@@ -16,6 +17,7 @@ import {
 import EmojiPicker from "emoji-picker-react";
 import Lottie from "lottie-react";
 import selectFriend from "../../animations/select-friend.json";
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const Chatting = () => {
   const user = useSelector((user) => user.login.loggedIn); //you can use state instead of user
@@ -88,8 +90,9 @@ const Chatting = () => {
   const handleFile = (e) => {
     const fileInput = e.target;
     const file = fileInput.files[0];
-
+    
     if (file) {
+      const fileName = user.uid + Date.now().toString(32) + file.name;
       const maxSize = 2 * 1024 * 1024; // 2MB
       const validImageTypes = [
         "image/jpeg",
@@ -97,6 +100,11 @@ const Chatting = () => {
         "image/webp",
         "image/gif",
       ];
+      const storageRef = Ref(
+        storage,
+        `${user.displayName}+${user.uid} = ImageMessages/ ${fileName}`
+      );
+      const uploadTask = uploadBytesResumable(storageRef, file);
 
       // Validate file type
       if (!validImageTypes.includes(file.type)) {
@@ -113,16 +121,8 @@ const Chatting = () => {
         fileInput.value = "";
         return;
       }
-      // Clear any previous error if file is valid
       setError(null);
-
       // Proceed with the upload if validation passes
-      const storageRef = Ref(
-        storage,
-        `${user.displayName} = ImageMessages/ ${file.name}` // I use {file.name} indeed {file} to generate unique name
-      );
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
       uploadTask.on(
         "state_changed",
         (snapshot) => {
@@ -149,6 +149,7 @@ const Chatting = () => {
             }).then(() => {
               setShowEmoji(false); // Hide emoji picker after sending
               setMessages(""); // Clear message input field
+              fileInput.value = "";
             });
           });
         }
@@ -162,7 +163,7 @@ const Chatting = () => {
     //   autoScrollRef.current.scrollIntoView({ behavior: "smooth" });
     // }
   }, [messages, allMessages, error]);
-
+  // send button
   const handleSendBtn = (e) => {
     if (e.key === "Enter") {
       handleSendMessage();
@@ -177,16 +178,14 @@ const Chatting = () => {
     (err) => console.table(err) // onNotAllowedOrFound
   );
   const addAudioElement = (blob) => {
-    // const uid = Date.now() + Math.random().toString(32);
-    const uid = Date.now().toString(32);
+    const uid = user.uid + Date.now().toString(32);
     const url = URL.createObjectURL(blob);
     const audio = document.createElement("audio");
     audio.src = url;
     audio.controls = true;
-    // document.body.appendChild(audio);
     const storageRef = Ref(
       storage,
-      `${user.displayName} = voiceMessages/${uid}`
+      `${user.displayName}+${user.uid} = voiceMessages/${uid}`
     );
     const metadata = {
       contentType: "audio/mp3",
@@ -218,11 +217,11 @@ const Chatting = () => {
       <div className="bg-transparent shadow-xl rounded-[10px] h-full col-span-2 overflow-hidden relative">
         {/* header */}
         <div className="w-full bg-[#F9F9F9] dark:bg-slate-700 py-3 px-3 flex items-center gap-x-3">
-          <img
+          <LazyLoadImage
             src={activeFriend?.photo || "/img/avatar.jpg"}
             className="w-16 h-16 rounded-full"
             alt="friends-profile-pic"
-            loading="lazy"
+            effect="blur"
           />
           <div className="text-black dark:text-white text-xl font-medium capitalize">
             {activeFriend?.name || " "}
@@ -234,11 +233,11 @@ const Chatting = () => {
             // if there are no messages
             allMessages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full w-full">
-                <img
+                <LazyLoadImage
                   src={activeFriend?.photo || "/img/avatar.jpg"}
                   className="w-44 h-44 rounded-full mb-3"
                   alt="friend's image"
-                  loading="lazy"
+                  effect="blur"
                 />
                 <p className="text-slate-800 dark:text-white font-medium text-2xl mb-10">
                   You are now connected with {activeFriend?.name || "none"}
@@ -258,7 +257,7 @@ const Chatting = () => {
                     // sender's message
                     <div className="flex justify-end">
                       {item.message && (
-                        <div className="text-slate-800 dark:text-white font-normal text-xl bg-purple-200 dark:bg-violet-500 px-4 pt-3 inline-block rounded-[10px] rounded-br-none my-1 relative max-w-[60%]">
+                        <div className="text-slate-800 dark:text-white font-normal text-xl bg-purple-200 dark:bg-violet-500 px-4 pt-2 inline-block rounded-[10px] rounded-br-none my-1 relative max-w-[60%]">
                           <p>{item.message}</p>
                           <h6 className="text-black dark:text-gray-100 font-extralight text-xs text-end pb-2">
                             {formatDistance(
@@ -273,14 +272,14 @@ const Chatting = () => {
                       )}
                       {/* sender's image */}
                       {item.image && (
-                        <div className="max-w-[60%] my-2 px-2 py-2 bg-purple-200 dark:bg-violet-500 rounded-[10px] rounded-br-none relative">
-                          <img
+                        <div className="max-w-[60%] my-2 px-2 pt-2 pb-1 bg-purple-200 dark:bg-violet-500 rounded-[10px] rounded-br-none relative">
+                          <LazyLoadImage
                             src={item.image}
                             className="max-w-full max-h-96 rounded-[10px] shadow-md"
                             alt="chatting-image"
-                            loading="lazy"
+                            effect="blur"
                           />
-                          <h6 className="text-white font-extralight text-sm text-end absolute bottom-3 right-3 bg-black px-3 py-1 rounded-full opacity-60 ">
+                          <h6 className="text-white font-extralight text-sm text-end absolute bottom-4 right-3 bg-black px-3 py-1 rounded-full opacity-60 ">
                             {formatDistance(
                               item.date.replace(/-/g, "/"),
                               new Date(),
@@ -293,14 +292,18 @@ const Chatting = () => {
                       {/* sender's audio */}
                       {item.audio && (
                         <div className="max-w-[60%] my-1 px-2 py-2 bg-purple-200 dark:bg-violet-500 rounded-[10px] rounded-br-none relative">
-                          <audio src={item.audio} className="bg-slate-100 shadow-md rounded-[10px]" controls></audio>
-                           <h6 className="text-black dark:text-gray-100 font-extralight text-xs text-end mt-1">
+                          <audio
+                            src={item.audio}
+                            className="bg-slate-100 shadow-md rounded-[10px]"
+                            controls
+                          ></audio>
+                          <h6 className="text-black dark:text-gray-100 font-extralight text-xs text-end mt-1">
                             {formatDistance(
-                              item.date.replace(/-/g, "/"), 
+                              item.date.replace(/-/g, "/"),
                               new Date(),
                               { addSuffix: true }
                             )}
-                          </h6> 
+                          </h6>
                           <span className="w-0 h-0 border-t-[25px] border-l-[25px] border-transparent rounded-[10px] border-l-purple-200 dark:border-l-violet-500 absolute -right-4 bottom-0"></span>
                         </div>
                       )}
@@ -309,7 +312,7 @@ const Chatting = () => {
                     // receiver's message
                     <div className="flex justify-start">
                       {item.message && (
-                        <div className="text-black dark:text-white font-normal text-xl bg-slate-200 dark:bg-stone-700 px-4 pt-3 inline-block rounded-[10px] my-1 relative max-w-[60%]">
+                        <div className="text-black dark:text-white font-normal text-xl bg-slate-200 dark:bg-stone-700 px-4 pt-2 inline-block rounded-[10px] my-1 relative max-w-[60%]">
                           <p>{item.message}</p>
                           <h6 className="text-black dark:text-gray-300 font-extralight text-xs text-end pb-2">
                             {formatDistance(
@@ -323,14 +326,14 @@ const Chatting = () => {
                       )}
                       {/* receiver's image */}
                       {item.image && (
-                        <div className="max-w-[60%] my-2 px-2 py-2 bg-slate-200 dark:bg-stone-700 rounded-[10px] rounded-tl-none relative">
-                          <img
+                        <div className="max-w-[60%] my-2 px-2 pt-2 pb-1 bg-slate-200 dark:bg-stone-700 rounded-[10px] rounded-tl-none relative">
+                          <LazyLoadImage
                             src={item.image}
                             className="max-w-full max-h-96 rounded-[10px] shadow-md"
                             alt="chatting-image"
-                            loading="lazy"
+                            effect="blur"
                           />
-                          <h6 className="text-white font-extralight text-sm text-end absolute bottom-3 right-3 bg-black px-3 py-1 rounded-full opacity-60">
+                          <h6 className="text-white font-extralight text-sm text-end absolute bottom-4 right-3 bg-black px-3 py-1 rounded-full opacity-60">
                             {formatDistance(
                               item.date.replace(/-/g, "/"),
                               new Date(),
@@ -343,14 +346,18 @@ const Chatting = () => {
                       {/* receiver's audio */}
                       {item.audio && (
                         <div className="max-w-[60%] my-1 px-2 py-2 bg-slate-200 dark:bg-stone-700 rounded-[10px] rounded-tl-none relative">
-                          <audio src={item.audio} className="bg-slate-100 shadow-md rounded-[10px]" controls></audio>
-                           <h6 className="text-black dark:text-gray-100 font-extralight text-xs text-end mt-1">
+                          <audio
+                            src={item.audio}
+                            className="bg-slate-100 shadow-md rounded-[10px]"
+                            controls
+                          ></audio>
+                          <h6 className="text-black dark:text-gray-100 font-extralight text-xs text-end mt-1">
                             {formatDistance(
                               item.date.replace(/-/g, "/"),
                               new Date(),
                               { addSuffix: true }
                             )}
-                          </h6> 
+                          </h6>
                           <span className="w-0 h-0 border-r-[21px] border-b-[25px] border-transparent border-r-slate-200 dark:border-r-stone-700 rounded-[10px] rounded-tr-none absolute -left-4 top-0"></span>
                         </div>
                       )}
