@@ -60,7 +60,7 @@ const Navber = () => {
             </div>
             <span className="absolute top-1/2 left-1/2 bg-black w-full h-full opacity-0 rounded-full transform -translate-x-1/2 -translate-y-1/2 group-hover:opacity-45 transition ease-out"></span>
           </div>
-          <span className="text-white font-semibold text-xl px-2 flex justify-center capitalize">
+          <span className="text-white font-semibold text-xl px-2 text-center capitalize">
             {user.displayName}
           </span>
         </div>
