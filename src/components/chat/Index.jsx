@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { getDatabase, onValue, push, ref, set } from "firebase/database";
 import { formatDistance } from "date-fns";
 import { AudioRecorder, useAudioRecorder } from "react-audio-voice-recorder";
-import { LazyLoadImage } from 'react-lazy-load-image-component';
+import { LazyLoadImage } from "react-lazy-load-image-component";
 import {
   getDownloadURL,
   getStorage,
@@ -17,13 +17,11 @@ import {
 import EmojiPicker from "emoji-picker-react";
 import Lottie from "lottie-react";
 import selectFriend from "../../animations/select-friend.json";
-import 'react-lazy-load-image-component/src/effects/blur.css';
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 const Chatting = () => {
   const user = useSelector((user) => user.login.loggedIn); //you can use state instead of user
-  const activeFriend = useSelector(
-    (activeFriendChat) => activeFriendChat.active.active
-  );
+  const activeFriend = useSelector((state) => state?.active.active);
   const storage = getStorage();
   const fileRef = useRef(null);
   const autoScrollRef = useRef(null);
@@ -90,7 +88,7 @@ const Chatting = () => {
   const handleFile = (e) => {
     const fileInput = e.target;
     const file = fileInput.files[0];
-    
+
     if (file) {
       const fileName = user.uid + Date.now().toString(32) + file.name;
       const maxSize = 2 * 1024 * 1024; // 2MB
@@ -211,6 +209,7 @@ const Chatting = () => {
       });
     });
   };
+console.log(activeFriend.status);
 
   return (
     <>
@@ -251,7 +250,7 @@ const Chatting = () => {
               </div>
             ) : (
               // if there are messages
-              allMessages.map((item, i) => (
+              allMessages?.map((item, i) => (
                 <div key={i} ref={autoScrollRef}>
                   {item.whoSendId === user.uid ? (
                     // sender's message
@@ -272,14 +271,14 @@ const Chatting = () => {
                       )}
                       {/* sender's image */}
                       {item.image && (
-                        <div className="max-w-[60%] my-2 px-2 pt-2 pb-1 bg-purple-200 dark:bg-violet-500 rounded-[10px] rounded-br-none relative">
-                          <LazyLoadImage
+                        <div className="max-w-[60%] my-2 px-2 py-2 bg-purple-200 dark:bg-violet-500 rounded-[10px] rounded-br-none relative">
+                          <img
                             src={item.image}
                             className="max-w-full max-h-96 rounded-[10px] shadow-md"
                             alt="chatting-image"
-                            effect="blur"
+                            // effect="blur"
                           />
-                          <h6 className="text-white font-extralight text-sm text-end absolute bottom-4 right-3 bg-black px-3 py-1 rounded-full opacity-60 ">
+                          <h6 className="text-white font-extralight text-sm text-end absolute bottom-3 right-3 bg-black px-3 py-1 rounded-full opacity-60 ">
                             {formatDistance(
                               item.date.replace(/-/g, "/"),
                               new Date(),
@@ -326,14 +325,14 @@ const Chatting = () => {
                       )}
                       {/* receiver's image */}
                       {item.image && (
-                        <div className="max-w-[60%] my-2 px-2 pt-2 pb-1 bg-slate-200 dark:bg-stone-700 rounded-[10px] rounded-tl-none relative">
-                          <LazyLoadImage
+                        <div className="max-w-[60%] my-2 px-2 py-2 bg-slate-200 dark:bg-stone-700 rounded-[10px] rounded-tl-none relative">
+                          <img
                             src={item.image}
                             className="max-w-full max-h-96 rounded-[10px] shadow-md"
                             alt="chatting-image"
-                            effect="blur"
+                            // effect="blur"
                           />
-                          <h6 className="text-white font-extralight text-sm text-end absolute bottom-4 right-3 bg-black px-3 py-1 rounded-full opacity-60">
+                          <h6 className="text-white font-extralight text-sm text-end absolute bottom-3 right-3 bg-black px-3 py-1 rounded-full opacity-60">
                             {formatDistance(
                               item.date.replace(/-/g, "/"),
                               new Date(),
@@ -379,14 +378,14 @@ const Chatting = () => {
           <div className="h-[116px] w-full bg-[#ffffff80] dark:bg-[#4755697a] backdrop-blur-sm dark:backdrop-blur-md flex rounded-b-lg items-center justify-center relative">
             {activeFriend?.status === "single" ? (
               <>
-                {/* message input section */}
-                {activeFriend?.isBlocked ? (
+                {activeFriend?.isBlocked === true ? (
                   <div className="w-full flex items-center justify-center">
                     <p className="text-red-600 w-[90%] text-base font-semibold text-center bg-red-200 py-3 rounded-[10px] z-20">
                       You have been blocked
                     </p>
                   </div>
                 ) : (
+                  // message input section
                   <div className="h-20 w-[90%] bg-[#F5F5F5] dark:bg-slate-700 rounded-[10px] flex items-center justify-between z-10">
                     <div className="flex items-center gap-x-3 px-3 ms-4">
                       <div

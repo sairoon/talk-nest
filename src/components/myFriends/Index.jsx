@@ -21,7 +21,6 @@ const MyFriends = () => {
 
   const getFriend = () => {
     const starCountRef = ref(db, "friends/");
-
     onValue(starCountRef, (snapshot) => {
       let friendArr = [];
       snapshot.forEach((item) => {
@@ -42,7 +41,7 @@ const MyFriends = () => {
   useEffect(() => {
     getFriend();
   }, [db, user.uid]);
-
+  // MARK: active chat
   const handleActiveChat = (data) => {
     // Set active friend
     setActiveFriend(data.id);
@@ -89,20 +88,21 @@ const MyFriends = () => {
       navigate("/message", { data });
     }
   };
-  // unfriend
+  // MARK: unfriend
   const handleUnfriend = (id) => {
     const unfriend = friends.find((req) => req.id == id);
     if (unfriend) {
-      remove(ref(db, "friends/" + unfriend.id)).then(() => {
-        getFriend();
-      });
+      remove(ref(db, "friends/" + unfriend.id));
+      //   .then(() => {
+      //     getFriend();
+      //   }
+      // );
     }
   };
-
+  // MARK: Block
   const handleBlock = (itemId) => {
     // console.log(itemId);
-
-    const toBlock = friends.find((req) => req.id == itemId);
+    const toBlock = friends.find((req) => req.id === itemId);
     if (toBlock) {
       const blockData = {
         id: toBlock.id,
