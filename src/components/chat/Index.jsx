@@ -14,6 +14,7 @@ import {
   uploadBytes,
   uploadBytesResumable,
 } from "firebase/storage";
+import { PropagateLoader, PulseLoader } from "react-spinners";
 import EmojiPicker from "emoji-picker-react";
 import Lottie from "lottie-react";
 import selectFriend from "../../animations/select-friend.json";
@@ -29,16 +30,19 @@ const Chatting = () => {
   const [allMessages, setAllMessages] = useState([]);
   const [showEmoji, setShowEmoji] = useState(false);
   const [error, setError] = useState(null);
+  const [loader, setLoader] = useState(false);
 
   const db = getDatabase();
 
   // write messages
   const handleSendMessage = () => {
+    setLoader(true);
     // Trim the message to avoid sending messages that are blank or just whitespace
     if (!messages.trim()) {
       setError("Please write a message before sending");
       setTimeout(() => {
         setError(null);
+        setLoader(false);
       }, 3000);
       return;
     }
@@ -55,6 +59,7 @@ const Chatting = () => {
       }).then(() => {
         setShowEmoji(false); // Hide emoji picker after sending
         setMessages(""); // Clear message input
+        setLoader(false);
       });
     }
   };
@@ -114,8 +119,10 @@ const Chatting = () => {
       }
       // Validate file size
       if (file.size > maxSize) {
+        setLoader(true);
         setError("File size shouldn't exceed 2MB");
         setTimeout(() => setError(null), 5000);
+        setTimeout(() => setLoader(false), 5000);
         fileInput.value = "";
         return;
       }
@@ -124,6 +131,7 @@ const Chatting = () => {
       uploadTask.on(
         "state_changed",
         (snapshot) => {
+          setLoader(true);
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           console.log("Upload is " + progress + "% done");
@@ -147,6 +155,7 @@ const Chatting = () => {
             }).then(() => {
               setShowEmoji(false); // Hide emoji picker after sending
               setMessages(""); // Clear message input field
+              setLoader(false);
               fileInput.value = "";
             });
           });
@@ -190,6 +199,7 @@ const Chatting = () => {
     };
 
     uploadBytes(storageRef, blob, metadata).then((snapshot) => {
+      setLoader(true);
       getDownloadURL(snapshot.ref).then((downloadURL) => {
         set(push(ref(db, "singleChat")), {
           whoSendName: user.displayName,
@@ -205,11 +215,12 @@ const Chatting = () => {
         }).then(() => {
           setShowEmoji(false); // Hide emoji picker after sending
           setMessages(""); // Clear message input field
+          setLoader(false);
         });
       });
     });
   };
-console.log(activeFriend.status);
+  console.log(activeFriend.status);
 
   return (
     <>
@@ -276,7 +287,6 @@ console.log(activeFriend.status);
                             src={item.image}
                             className="max-w-full max-h-96 rounded-[10px] shadow-md"
                             alt="chatting-image"
-                            // effect="blur"
                           />
                           <h6 className="text-white font-extralight text-sm text-end absolute bottom-3 right-3 bg-black px-3 py-1 rounded-full opacity-60 ">
                             {formatDistance(
@@ -330,7 +340,6 @@ console.log(activeFriend.status);
                             src={item.image}
                             className="max-w-full max-h-96 rounded-[10px] shadow-md"
                             alt="chatting-image"
-                            // effect="blur"
                           />
                           <h6 className="text-white font-extralight text-sm text-end absolute bottom-3 right-3 bg-black px-3 py-1 rounded-full opacity-60">
                             {formatDistance(
@@ -386,7 +395,7 @@ console.log(activeFriend.status);
                   </div>
                 ) : (
                   // message input section
-                  <div className="h-20 w-[90%] bg-[#F5F5F5] dark:bg-slate-700 rounded-[10px] flex items-center justify-between z-10">
+                  <div className="h-20 w-[90%] bg-[#F5F5F5] dark:bg-slate-700 rounded-[10px] flex items-center justify-between z-10 relative">
                     <div className="flex items-center gap-x-3 px-3 ms-4">
                       <div
                         className="text-black dark:text-white cursor-pointer active:scale-90 transition ease-out"
@@ -412,6 +421,7 @@ console.log(activeFriend.status);
                         onClick={() => fileRef.current.click()}
                       >
                         <GalleryIcon />
+
                         <input
                           type="file"
                           hidden
@@ -436,6 +446,12 @@ console.log(activeFriend.status);
                       <p className="text-red-600 w-full text-base font-semibold my-2 text-center bg-red-200 py-3 rounded-[10px] mx-4 transition ease-out duration-150">
                         {error}
                       </p>
+                    ) : loader ? (
+                      <PropagateLoader
+                        size={15}
+                        className="absolute -top-1 -left-1"
+                        color="white"
+                      />
                     ) : (
                       <input
                         className="w-full h-[80%] outline-none bg-transparent placeholder:text-[#C8C8C8] dark:placeholder:text-slate-400 text-gray-600 dark:text-gray-300 px-4 font-medium text-xl align-middle caret-purple-500"
@@ -448,10 +464,19 @@ console.log(activeFriend.status);
                       />
                     )}
                     <button
-                      className="bg-[#3e8ceb] dark:bg-cyan-600 py-4 px-10 rounded-[10px] font-medium text-white text-xl me-3 active:scale-95 transition ease-out"
+                      className={`bg-[#3e8ceb] dark:bg-cyan-600 py-4 px-10 rounded-[10px] font-medium text-white text-xl me-3 active:scale-95 transition ease-out ${loader ? "disabled:cursor-not-allowed disabled:scale-100" : ""}`}
                       onClick={handleSendMessage}
+                      disabled={loader}
                     >
-                      Send
+                      {loader && error ? (
+                        <PulseLoader
+                          size={5}
+                          color="white"
+                          className="text-nowrap px-2"
+                        />
+                      ) : (
+                        "Send"
+                      )}
                     </button>
                   </div>
                 )}
