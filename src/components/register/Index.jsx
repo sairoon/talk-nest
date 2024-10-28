@@ -125,7 +125,9 @@ const RegFormComp = ({ toast }) => {
             className="w-full bg-transparent px-3 py-2 border capitalize border-slate-300 rounded-md outline-none mt-3 text-gray-800 dark:text-white"
           />
           {formik.errors.userName && formik.touched.userName ? (
-            <span className="text-red-500 dark:text-red-400 font-normal">{formik.errors.userName}</span>
+            <span className="text-red-500 dark:text-red-400 font-normal">
+              {formik.errors.userName}
+            </span>
           ) : null}
         </div>
         <div className="my-3">
@@ -139,7 +141,9 @@ const RegFormComp = ({ toast }) => {
             className="w-full bg-transparent px-3 py-2 border border-slate-300 rounded-md outline-none mt-3 text-gray-800 dark:text-white"
           />
           {formik.errors.email && formik.touched.email ? (
-            <span className="text-red-500 dark:text-red-400 font-normal">{formik.errors.email}</span>
+            <span className="text-red-500 dark:text-red-400 font-normal">
+              {formik.errors.email}
+            </span>
           ) : null}
         </div>
 
@@ -171,7 +175,9 @@ const RegFormComp = ({ toast }) => {
             )}
           </button>
           {formik.errors.password && formik.touched.password ? (
-            <span className="text-red-500 dark:text-red-400 font-normal">{formik.errors.password}</span>
+            <span className="text-red-500 dark:text-red-400 font-normal">
+              {formik.errors.password}
+            </span>
           ) : null}
         </div>
 
@@ -211,7 +217,7 @@ const RegFormComp = ({ toast }) => {
         <button
           type="submit"
           disabled={loader}
-          className="w-full bg-[#313131] text-white font-medium text-base px-3 py-3 rounded-[10px] my-2 disabled:cursor-not-allowed disabled:scale-100 active:scale-95 transition-all ease-out hover:bg-purple-700 dark:hover:bg-stone-800"
+          className="w-full bg-[#313131] text-white font-medium text-base px-3 py-3 rounded-[10px] my-2 disabled:cursor-not-allowed disabled:scale-100 active:scale-95 transition ease-linear duration-150 hover:bg-[#5e3493] dark:hover:bg-stone-800"
         >
           {loader ? (
             <PulseLoader color="#fff" size={5} speedMultiplier={1} />

@@ -81,7 +81,7 @@ const ForgotPassComp = ({ toast }) => {
           <button
             type="submit"
             disabled={loader}
-            className="w-full bg-[#313131] text-white font-medium text-base px-3 py-3 rounded-[10px] my-2 disabled:cursor-not-allowed disabled:scale-100 active:scale-95 transition ease-out hover:bg-purple-700 dark:hover:bg-stone-800"
+            className="w-full bg-[#313131] text-white font-medium text-base px-3 py-3 rounded-[10px] my-2 disabled:cursor-not-allowed disabled:scale-100 active:scale-95 transition ease-linear duration-150 hover:bg-[#5e3493] dark:hover:bg-stone-800"
           >
             {loader ? (
               <PulseLoader color="#fff" size={5} speedMultiplier={1} />
