@@ -414,26 +414,26 @@ const Chatting = () => {
                       ref.blockedId === user.uid
                   ) ? (
                     <div className="w-full flex items-center justify-center">
-                      <div className="w-[90%] text-base font-semibold text-center dark:bg-gray-800 bg-gray-300 py-3 rounded-[10px] z-20 select-none">
+                      <div className="w-[90%] text-base font-semibold text-center shadow-md dark:shadow-none dark:bg-gray-800 bg-gray-300 py-3 rounded-[10px] z-20 select-none">
                         <div className="dark:text-gray-300 text-gray-700">
                           <span className="capitalize font-bold text-gray-600 dark:text-gray-200">
                             {activeFriend?.name}
                           </span>{" "}
-                          blocked you
+                          blocked you.
                         </div>
-                        <div className="dark:text-gray-500 text-gray-600">
-                          You can't reply to this conversation any more
+                        <div className="dark:text-gray-500 text-gray-500">
+                          You can't reply to this conversation any more.
                         </div>
                       </div>
                     </div>
                   ) : (
                     <div className="w-full flex items-center justify-center">
-                      <div className="text-red-600 w-[90%] text-base font-semibold text-center bg-red-200 py-3 rounded-[10px] z-20 select-none">
+                      <div className="text-red-600 w-[90%] text-base font-semibold text-center shadow-md dark:shadow-none bg-red-200 py-3 rounded-[10px] z-20 select-none">
                         You blocked{" "}
                         <span className="font-bold capitalize">
                           {activeFriend?.name}.
                         </span>
-                        <div>To continue chatting, unblock first</div>
+                        <div>To continue chatting, unblock first.</div>
                       </div>
                       <p></p>
                     </div>

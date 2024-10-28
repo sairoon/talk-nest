@@ -225,7 +225,7 @@ const MyFriends = () => {
                 <div className="flex items-center gap-x-2">
                   {blocked ? (
                     <button
-                      className="bg-amber-400 px-4 py-3 rounded-md font-semibold text-sm text-black cursor-default"
+                      className="bg-amber-400 px-4 py-3 rounded-md font-semibold text-sm text-gray-800 cursor-default"
                       title="You're blocked"
                     >
                       Blocked
