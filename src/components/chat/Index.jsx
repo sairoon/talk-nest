@@ -28,6 +28,7 @@ const Chatting = () => {
   const autoScrollRef = useRef(null);
   const [messages, setMessages] = useState("");
   const [allMessages, setAllMessages] = useState([]);
+  const [block, setBlock] = useState([]);
   const [showEmoji, setShowEmoji] = useState(false);
   const [error, setError] = useState(null);
   const [loader, setLoader] = useState(false);
@@ -220,7 +221,17 @@ const Chatting = () => {
       });
     });
   };
-  console.log(activeFriend.status);
+
+  useEffect(() => {
+    const blockRef = ref(db, "block/");
+    onValue(blockRef, (snapshot) => {
+      let blockArr = [];
+      snapshot.forEach((item) => {
+        blockArr.push({ ...item.val(), id: item.key });
+      });
+      setBlock(blockArr);
+    });
+  }, [activeFriend?.id]);
 
   return (
     <>
@@ -250,7 +261,10 @@ const Chatting = () => {
                   effect="blur"
                 />
                 <p className="text-slate-800 dark:text-white font-medium text-2xl mb-10">
-                  You are now connected with {activeFriend?.name || "none"}
+                  You are now connected with{" "}
+                  <span className="capitalize">
+                    {activeFriend?.name || "none"}
+                  </span>
                 </p>
                 <p className="text-slate-800 dark:text-white font-light text-lg">
                   No message here yet
@@ -288,7 +302,7 @@ const Chatting = () => {
                             className="max-w-full max-h-96 rounded-[10px] shadow-md"
                             alt="chatting-image"
                           />
-                          <h6 className="text-white font-extralight text-sm text-end absolute bottom-3 right-3 bg-black px-3 py-1 rounded-full opacity-60 ">
+                          <h6 className="text-white font-extralight text-sm text-end absolute bottom-4 right-4 bg-black px-3 py-1 rounded-full opacity-60 text-nowrap">
                             {formatDistance(
                               item.date.replace(/-/g, "/"),
                               new Date(),
@@ -341,7 +355,7 @@ const Chatting = () => {
                             className="max-w-full max-h-96 rounded-[10px] shadow-md"
                             alt="chatting-image"
                           />
-                          <h6 className="text-white font-extralight text-sm text-end absolute bottom-3 right-3 bg-black px-3 py-1 rounded-full opacity-60">
+                          <h6 className="text-white font-extralight text-sm text-end absolute bottom-4 right-4 bg-black px-3 py-1 rounded-full opacity-60 text-nowrap">
                             {formatDistance(
                               item.date.replace(/-/g, "/"),
                               new Date(),
@@ -387,12 +401,43 @@ const Chatting = () => {
           <div className="h-[116px] w-full bg-[#ffffff80] dark:bg-[#4755697a] backdrop-blur-sm dark:backdrop-blur-md flex rounded-b-lg items-center justify-center relative">
             {activeFriend?.status === "single" ? (
               <>
-                {activeFriend?.isBlocked === true ? (
-                  <div className="w-full flex items-center justify-center">
-                    <p className="text-red-600 w-[90%] text-base font-semibold text-center bg-red-200 py-3 rounded-[10px] z-20">
-                      You have been blocked
-                    </p>
-                  </div>
+                {block.some(
+                  (ref) =>
+                    (ref.blockerId === user.uid &&
+                      ref.blockedId === activeFriend.id) ||
+                    (ref.blockerId === activeFriend.id &&
+                      ref.blockedId === user.uid)
+                ) ? (
+                  block.find(
+                    (ref) =>
+                      ref.blockerId === activeFriend.id &&
+                      ref.blockedId === user.uid
+                  ) ? (
+                    <div className="w-full flex items-center justify-center">
+                      <div className="w-[90%] text-base font-semibold text-center dark:bg-gray-800 bg-gray-300 py-3 rounded-[10px] z-20 select-none">
+                        <div className="dark:text-gray-300 text-gray-700">
+                          <span className="capitalize font-bold text-gray-600 dark:text-gray-200">
+                            {activeFriend?.name}
+                          </span>{" "}
+                          blocked you
+                        </div>
+                        <div className="dark:text-gray-500 text-gray-600">
+                          You can't reply to this conversation any more
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-full flex items-center justify-center">
+                      <div className="text-red-600 w-[90%] text-base font-semibold text-center bg-red-200 py-3 rounded-[10px] z-20 select-none">
+                        You blocked{" "}
+                        <span className="font-bold capitalize">
+                          {activeFriend?.name}.
+                        </span>
+                        <div>To continue chatting, unblock first</div>
+                      </div>
+                      <p></p>
+                    </div>
+                  )
                 ) : (
                   // message input section
                   <div className="h-20 w-[90%] bg-[#F5F5F5] dark:bg-slate-700 rounded-[10px] flex items-center justify-between z-10 relative">
@@ -431,8 +476,7 @@ const Chatting = () => {
                         />
                       </div>
                     </div>
-                    {/*MARK: voice
-                     */}
+                    {/* voice */}
                     <div
                       className={!recorderControls.isRecording ? "hidden" : ""}
                     >
@@ -450,7 +494,7 @@ const Chatting = () => {
                       <PropagateLoader
                         size={15}
                         className="absolute -top-1 -left-1"
-                        color="white"
+                        color="#af8cfc"
                       />
                     ) : (
                       <input
@@ -464,7 +508,11 @@ const Chatting = () => {
                       />
                     )}
                     <button
-                      className={`bg-[#3e8ceb] dark:bg-cyan-600 py-4 px-10 rounded-[10px] font-medium text-white text-xl me-3 active:scale-95 transition ease-out ${loader ? "disabled:cursor-not-allowed disabled:scale-100" : ""}`}
+                      className={`bg-[#3e8ceb] dark:bg-cyan-600 py-4 px-10 rounded-[10px] font-medium text-white text-xl me-3 active:scale-95 transition ease-out ${
+                        loader
+                          ? "disabled:cursor-not-allowed disabled:scale-100"
+                          : ""
+                      }`}
                       onClick={handleSendMessage}
                       disabled={loader}
                     >
