@@ -71,7 +71,7 @@ const Navber = () => {
           >
             <HomeIcon />
             {location.pathname === "/" && (
-              <span className="absolute -top-2 -right-[50px] w-2 h-16 bg-white dark:bg-slate-800 cursor-auto"></span>
+              <span className="absolute -top-2 -right-[50px] w-2 dark:w-3 h-16 bg-white dark:bg-slate-800 cursor-auto"></span>
             )}
           </Link>
           <Link
@@ -80,7 +80,7 @@ const Navber = () => {
           >
             <MessageIcon />
             {location.pathname === "/message" && (
-              <span className="absolute -top-2 -right-[50px] w-2 h-16 bg-white dark:bg-slate-800 cursor-auto"></span>
+              <span className="absolute -top-2 -right-[50px] w-2 dark:w-3 h-16 bg-white dark:bg-slate-800 cursor-auto"></span>
             )}
           </Link>
         </nav>

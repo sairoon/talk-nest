@@ -435,7 +435,6 @@ const Chatting = () => {
                         </span>
                         <div>To continue chatting, unblock first.</div>
                       </div>
-                      <p></p>
                     </div>
                   )
                 ) : (
