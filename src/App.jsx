@@ -66,7 +66,7 @@ function App() {
     <>
       <RouterProvider router={router} />
       <button
-        className="absolute bottom-28 left-16 text-white"
+        className="absolute bottom-28 left-14 text-white"
         onClick={toggleDarkMode}
       >
         {darkMode ? (
